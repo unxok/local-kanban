@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --background-primary-r: 32;
+  --background-primary-g: 32;
+  --background-primary-b: 32;
+  --background-primary: rgb(
+    var(--background-primary-r),
+    var(--background-primary-g),
+    var(--background-primary-b)
+  );
+  --background-secondary: rgb(83, 83, 83);
+  --foreground-primary: rgb(228, 228, 228);
+  --foreground-secondary: rgb(175, 175, 175);
+  --accent-h: 67;
+  --accent-s: 100%;
+  --accent-l: 50%;
+  --accent-hsl: var(--accent-h) var(--accent-s) var(--accent-l);
+}
