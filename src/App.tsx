@@ -1,8 +1,10 @@
-import { useState } from "react";
 import "./App.css";
-import { Board, CardProps, LaneConfig } from "./components/Board";
+import { Board, LaneConfig } from "./components/Board";
+import { CardProps, CardsProvider } from "./components/CardsProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { CardDescription, CardTitle } from "./components/ui/card";
+import { Separator } from "./components/ui/separator";
 
 const fakeData: CardProps[] = [
   {
@@ -64,18 +66,29 @@ const fakeLaneConfig: LaneConfig[] = [
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="fixed inset-0 bg-background-secondary">
-        Local Kanban
-        <Board
-          cards={fakeData}
-          title={"Unxok's Tasks"}
-          id={"id"}
-          description={"a description"}
-          sortProperty={"status"}
-          laneConfigArr={fakeLaneConfig}
-        ></Board>
-        <ThemeToggle></ThemeToggle>
-      </div>
+      <CardsProvider localCards={fakeData}>
+        <div className="bg-background-secondary fixed inset-0 flex flex-col">
+          <div>
+            <div className="p-3">
+              <CardTitle className="ubuntu-regular text-3xl">
+                Local Kanban
+              </CardTitle>
+              <CardDescription>
+                Smooth and easy task management that works completely offline
+              </CardDescription>
+            </div>
+            <Separator />
+          </div>
+          <Board
+            title={"Unxok's Tasks"}
+            id={"id"}
+            description={"a description"}
+            sortProperty={"status"}
+            laneConfigArr={fakeLaneConfig}
+          ></Board>
+          <ThemeToggle></ThemeToggle>
+        </div>
+      </CardsProvider>
     </ThemeProvider>
   );
 }

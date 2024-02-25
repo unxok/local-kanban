@@ -1,6 +1,4 @@
-import { LayoutIcon, ListBulletIcon } from "@radix-ui/react-icons";
 import { Lane } from "./Lane";
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,64 +8,65 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { useCards } from "../CardsProvider";
+import { BoardMenuButton } from "./BoardMenuButton";
+import { useEffect } from "react";
+
 export type LaneConfig = {
   title: string;
   id: string;
   bg: string;
 };
 
-export type CardProps = {
-  title: string;
+export type BoardProps = {
   id: string;
-  description?: string | null;
-  text?: string | null;
-  tags?: string[] | null;
-  properties?: { [key: string]: any } | null;
-};
-
-type BaseBoardProps = {
+  title: string;
+  description?: string;
+  text?: string;
   sortProperty: string;
   children?: any;
-  cards: CardProps[];
   laneConfigArr: LaneConfig[];
 };
 
-type Spread<Type> = { [Key in keyof Type]: Type[Key] };
-type BoardProps = Spread<CardProps & BaseBoardProps>;
-
 export const Board = (props: BoardProps) => {
-  const { title, id, cards, sortProperty, laneConfigArr, children } = props;
-  const [cardState, setCardState] = useState<CardProps[]>(cards);
+  const { title, id, sortProperty, laneConfigArr /*,children*/ } = props;
   const description = props.description ? props.description : "";
   const text = props.text ? props.text : "";
-  const tags = props.tags ? props.tags : [];
-  const properties = props.properties ? props.properties : [];
 
-  const updateCards = (newCardState: CardProps[]) => setCardState(newCardState);
+  const { cards } = useCards();
+
+  useEffect(() => console.log("cards changed: ", cards), [cards]);
 
   return (
-    <div className="fixed inset-10 flex flex-col items-center justify-start gap-10 rounded-3xl bg-background-primary p-10">
+    <div className="bg-background-primary flex flex-col items-center justify-start gap-10 rounded-3xl p-10">
       <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex flex-row gap-2">
-            {title}
-            <span className="text-primary-foreground">{cardState.length}</span>
-          </CardTitle>
-          <CardDescription>{description}</CardDescription>
+        <CardHeader className="flex flex-row justify-between">
+          <div>
+            <CardTitle className="flex flex-row gap-2">
+              {title}
+              <span className="opacity-50">{cards?.length || 0}</span>
+            </CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </div>
+          <BoardMenuButton
+            id={id}
+            laneConfigArr={laneConfigArr}
+            sortProperty={sortProperty}
+            title={title}
+            description={description}
+            text={text}
+          />
         </CardHeader>
         <CardContent>
           <div className="flex h-full w-full flex-row gap-3">
+            <p>{text}</p>
             {laneConfigArr.map((l) => (
               <Lane
-                updateCards={updateCards}
                 key={l.id}
                 title={l.title}
                 id={l.id}
                 bg={l.bg}
-                cards={cards.filter(
-                  // @ts-ignore TO DO
-                  (card) => card.properties[sortProperty] === l.id,
-                )}
+                sortProperty={sortProperty}
               />
             ))}
           </div>

@@ -1,4 +1,5 @@
-import { LaneProps } from "..";
+import { useCards } from "@/components/CardsProvider";
+import { LaneConfig } from "../..";
 import { LaneCard } from "./LaneCard";
 
 const getBgColor = (color: string) => {
@@ -39,26 +40,36 @@ const getBorderColor = (color: string) => {
   }
 };
 
-export const LaneBody = ({ id, bg, cards, updateCards }: LaneProps) => {
+export const LaneBody = ({
+  id,
+  bg,
+  sortProperty,
+}: LaneConfig & { sortProperty: string }) => {
   const bgColor = getBgColor(bg);
   const borderColor = getBorderColor(bg);
+  const { cards } = useCards();
+  const filteredCards = cards?.filter(
+    // @ts-ignore TO DO
+    (card) => card.properties[sortProperty] === id,
+  );
   return (
     <div
       id={id}
       className={`flex h-max min-h-24 w-full flex-col gap-3 rounded-lg border border-solid bg-opacity-10 p-3 pb-24 ${bgColor} ${borderColor}`}
     >
       {/* LaneCard */}
-      {cards.map((c) => (
-        <LaneCard
-          key={c.id}
-          id={c.id}
-          title={c.title}
-          description={c.description}
-          properties={c.properties}
-          tags={c.tags}
-          text={c.text}
-        />
-      ))}
+      {filteredCards &&
+        filteredCards.map((c) => (
+          <LaneCard
+            key={c.id}
+            id={c.id}
+            title={c.title}
+            description={c.description}
+            properties={c.properties}
+            tags={c.tags}
+            text={c.text}
+          />
+        ))}
     </div>
   );
 };

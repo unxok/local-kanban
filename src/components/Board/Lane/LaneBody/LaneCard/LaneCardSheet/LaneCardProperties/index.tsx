@@ -1,4 +1,4 @@
-import { CardProps } from "@/components/Board";
+import { CardProps } from "@/components/CardsProvider";
 import {
   Table,
   TableHeader,
@@ -15,7 +15,6 @@ export const LaneCardProperties = (props: {
   if (!props.properties) {
     return null;
   }
-  console.log("we made it");
   const colHeaders = Object.keys(props.properties);
   return (
     <Table>

@@ -8,8 +8,8 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { CardProps } from "../..";
 import { LaneCardSheet } from "./LaneCardSheet";
+import { CardProps } from "@/components/CardsProvider";
 
 export const LaneCard = (props: CardProps) => {
   const { id, title } = props;
@@ -21,12 +21,12 @@ export const LaneCard = (props: CardProps) => {
   return (
     <Card
       draggable
-      className="hover:border-primary relative hover:cursor-grab active:hover:cursor-grabbing"
+      className="relative hover:cursor-grab hover:border-primary active:hover:cursor-grabbing"
     >
-      <CardHeader>
+      <CardHeader className="px-3 pb-1 pt-0">
         <CardTitle>
+          {/* This is the sheet pop up with editable information */}
           <LaneCardSheet
-            key={id + "-sheet"}
             id={id}
             title={title}
             description={description}
@@ -39,13 +39,13 @@ export const LaneCard = (props: CardProps) => {
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-row gap-2">
+      <CardContent className="flex flex-row gap-2 px-3 py-2">
         {tags &&
           tags.map((t) => (
             <Button
               key={t}
               variant={"secondary"}
-              className="text-primary h-fit rounded-lg px-2 py-1 text-xs"
+              className="h-fit rounded-lg px-2 py-1 text-xs text-primary"
             >
               {t}
             </Button>
