@@ -1,0 +1,27 @@
+name: Deploy to GitHub Pages
+
+on: 
+  push:
+    branches: 'main'
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Fetches all history for all tags and branches
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "me@unxok.com"
+        git config --global user.name "bot@unxok"
+
+    - name: Commit and Push dist to gh-pages
+      run: |
+        git add dist
+        git commit -m "Initial dist subtree commit" || echo "No changes to commit"
+        git push origin `git subtree split --prefix dist main`:gh-pages --force
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
