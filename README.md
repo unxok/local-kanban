@@ -5,3 +5,4 @@ A task management kanban board with list view, CSV import/export, and Markdown s
 ## Concept Art
 
 ![board concept image](./src/assets/local-kanban-concept.svg)
+
