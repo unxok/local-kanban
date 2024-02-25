@@ -1,6 +1,14 @@
 import { LayoutIcon, ListBulletIcon } from "@radix-ui/react-icons";
 import { Lane } from "./Lane";
 import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  // CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export type LaneConfig = {
   title: string;
@@ -39,41 +47,32 @@ export const Board = (props: BoardProps) => {
 
   return (
     <div className="fixed inset-10 flex flex-col items-center justify-start gap-10 rounded-3xl bg-background-primary p-10">
-      <div className="font-ubuntu flex w-full flex-col items-center justify-start rounded-3xl bg-background-primary">
-        {/* Holds title and card number */}
-        <div className="flex w-full flex-row items-center justify-start gap-2">
-          <h1 className="text-3xl font-semibold text-foreground-primary">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex flex-row gap-2">
             {title}
-          </h1>
-          <span className="font-bold text-foreground-secondary">
-            {cards.length}
-          </span>
-        </div>
-        {/* Holds board and list buttons */}
-        <div className="flex w-full flex-row items-center justify-start gap-10 text-accent-50">
-          <div className="flex flex-row items-center justify-center gap-2">
-            <LayoutIcon /> <span>Board</span>
+            <span className="text-primary-foreground">{cardState.length}</span>
+          </CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-full w-full flex-row gap-3">
+            {laneConfigArr.map((l) => (
+              <Lane
+                updateCards={updateCards}
+                key={l.id}
+                title={l.title}
+                id={l.id}
+                bg={l.bg}
+                cards={cards.filter(
+                  // @ts-ignore TO DO
+                  (card) => card.properties[sortProperty] === l.id,
+                )}
+              />
+            ))}
           </div>
-          <div className="flex flex-row items-center justify-center gap-2 text-white">
-            <ListBulletIcon /> <span>List</span>
-          </div>
-        </div>
-      </div>
-      <div className="flex h-full w-full flex-row gap-3">
-        {laneConfigArr.map((c) => (
-          <Lane
-            updateCards={updateCards}
-            key={c.id}
-            title={c.title}
-            id={c.id}
-            bg={c.bg}
-            cards={cards.filter(
-              // @ts-ignore TO DO
-              (card) => card.properties[sortProperty] === c.id,
-            )}
-          />
-        ))}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

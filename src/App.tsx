@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 import { Board, CardProps, LaneConfig } from "./components/Board";
+import { ThemeProvider } from "./components/ThemeProvider";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 const fakeData: CardProps[] = [
   {
@@ -9,6 +11,18 @@ const fakeData: CardProps[] = [
     id: "take-out-trash",
     tags: ["task"],
     text: "Note: trash day on Thursday. But it's pretty big anyway",
+    properties: {
+      type: "task",
+      due: "2023/02/26",
+      status: "to-do",
+    },
+  },
+  {
+    title: "Make the bed",
+    description: "Fix the sheets, lay out blankets, etc.",
+    id: "make-the-bed",
+    tags: ["task"],
+    text: "You may want to grab the fur roller thing too just in case there's a bunch of cat hair everywhere",
     properties: {
       type: "task",
       due: "2023/02/26",
@@ -48,20 +62,21 @@ const fakeLaneConfig: LaneConfig[] = [
 ];
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="fixed inset-0 bg-background-secondary">
-      Local Kanban
-      <Board
-        cards={fakeData}
-        title={"Unxok's Tasks"}
-        id={"id"}
-        description={"a description"}
-        sortProperty={"status"}
-        laneConfigArr={fakeLaneConfig}
-      ></Board>
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="fixed inset-0 bg-background-secondary">
+        Local Kanban
+        <Board
+          cards={fakeData}
+          title={"Unxok's Tasks"}
+          id={"id"}
+          description={"a description"}
+          sortProperty={"status"}
+          laneConfigArr={fakeLaneConfig}
+        ></Board>
+        <ThemeToggle></ThemeToggle>
+      </div>
+    </ThemeProvider>
   );
 }
 
