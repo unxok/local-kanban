@@ -21,6 +21,17 @@ import {
   SheetTitle,
   SheetDescription,
 } from "./components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { useEffect, useState } from "react";
 import { ScrollArea } from "./components/ui/scroll-area";
 
@@ -63,48 +74,48 @@ import { ScrollArea } from "./components/ui/scroll-area";
 //   },
 // ];
 
-// const fakeLaneConfig: LaneConfig[] = [
-//   {
-//     title: "TO DO",
-//     id: "to-do",
-//     bg: "red",
-//   },
-//   {
-//     title: "IN PROGRESS",
-//     id: "in-progress",
-//     bg: "blue",
-//   },
-//   {
-//     title: "COMPLETED",
-//     id: "completed",
-//     bg: "green",
-//   },
-// ];
+const fakeLaneConfig: LaneConfig[] = [
+  {
+    title: "TO DO",
+    id: "to-do",
+    bg: "red",
+  },
+  {
+    title: "IN PROGRESS",
+    id: "in-progress",
+    bg: "blue",
+  },
+  {
+    title: "COMPLETED",
+    id: "completed",
+    bg: "green",
+  },
+];
 
-// const b: BoardProps = {
-//   id: "unxoks-board",
-//   title: "Unxoks Saved Tasks",
-//   description: "a short description",
-//   text: "bleep bloop bloop",
-//   sortProperty: "status",
-//   laneConfigArr: [
-//     {
-//       title: "TO DO",
-//       id: "to-do",
-//       bg: "red",
-//     },
-//     {
-//       title: "IN PROGRESS",
-//       id: "in-progress",
-//       bg: "blue",
-//     },
-//     {
-//       title: "COMPLETED",
-//       id: "completed",
-//       bg: "green",
-//     },
-//   ],
-// };
+const fakeBoardConfig: BoardProps = {
+  id: "unxoks-board",
+  title: "Unxoks Saved Tasks",
+  description: "a short description",
+  text: "bleep bloop bloop",
+  sortProperty: "status",
+  laneConfigArr: [
+    {
+      title: "TO DO",
+      id: "to-do",
+      bg: "red",
+    },
+    {
+      title: "IN PROGRESS",
+      id: "in-progress",
+      bg: "blue",
+    },
+    {
+      title: "COMPLETED",
+      id: "completed",
+      bg: "green",
+    },
+  ],
+};
 
 function App() {
   const [boardConfigs, setBoardConfigs] = useState<BoardProps[] | undefined>();
@@ -115,31 +126,30 @@ function App() {
     console.log(JSON.parse(boards));
   }, []);
 
-  // // const updateBoardConfig = (id: string, newConfig: BoardProps) => {
-  // //   if (!boardConfigs) {
-  // //     setBoardConfigs([newConfig]);
-  // //     localStorage.setItem("boards", JSON.stringify([newConfig]));
-  // //   }
-
-  //   const foundBoard = boardConfigs?.find((b) => b.id === id);
-  //   if (!foundBoard) {
-  //     setBoardConfigs((prev) => {
-  //       if (!prev) return [newConfig];
-  //       const newBoards = [...prev, newConfig];
-  //       localStorage.setItem("boards", JSON.stringify([newBoards]));
-  //       return newBoards;
-  //     });
-  //   }
-  //   const filteredBoards = boardConfigs?.filter((b) => b.id !== id);
-  //   if (!filteredBoards) {
-  //     throw new Error("You shouldn't be seeing this. Check App.tsx line 110");
-  //   }
-  //   setBoardConfigs([...filteredBoards, newConfig]);
-  //   localStorage.setItem(
-  //     "boards",
-  //     JSON.stringify([...filteredBoards, newConfig]),
-  //   );
-  // };
+  const updateBoardConfig = (id: string, newConfig: BoardProps) => {
+    if (!boardConfigs) {
+      setBoardConfigs([newConfig]);
+      localStorage.setItem("boards", JSON.stringify([newConfig]));
+    }
+    const foundBoard = boardConfigs?.find((b) => b.id === id);
+    if (!foundBoard) {
+      setBoardConfigs((prev) => {
+        if (!prev) return [newConfig];
+        const newBoards = [...prev, newConfig];
+        localStorage.setItem("boards", JSON.stringify([newBoards]));
+        return newBoards;
+      });
+    }
+    const filteredBoards = boardConfigs?.filter((b) => b.id !== id);
+    if (!filteredBoards) {
+      throw new Error("You shouldn't be seeing this. Check App.tsx line 110");
+    }
+    setBoardConfigs([...filteredBoards, newConfig]);
+    localStorage.setItem(
+      "boards",
+      JSON.stringify([...filteredBoards, newConfig]),
+    );
+  };
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -164,7 +174,7 @@ function App() {
                 <SheetHeader>
                   <SheetTitle>Settings</SheetTitle>
                   <SheetDescription>
-                    Nothing to see here yet...
+                    <AddBoardButton updateBoardConfig={updateBoardConfig}  />
                   </SheetDescription>
                 </SheetHeader>
               </SheetContent>
@@ -216,3 +226,56 @@ function App() {
 }
 
 export default App;
+
+export const AddBoardButton = ({updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
+  //
+  const [newBoardConfig, setNewBoardConfig] = useState<BoardProps | null>(null);
+
+  return (
+    <AlertDialog>
+    <AlertDialogTrigger className={buttonVariants({variant: 'ghost'})}>
+        Add board
+      </AlertDialogTrigger>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Add new board</AlertDialogTitle>
+        <AlertDialogDescription>
+          Add a new board. Right now it has to be JSON in the following format:
+          <pre><code>
+            {JSON.stringify({
+              id: "unxoks-board",
+              title: "Unxoks Saved Tasks",
+              description: "a short description",
+              text: "bleep bloop bloop",
+              sortProperty: "status",
+              laneConfigArr: [
+                {
+                  title: "TO DO",
+                  id: "to-do",
+                  bg: "red",
+                },
+                {
+                  title: "IN PROGRESS",
+                  id: "in-progress",
+                  bg: "blue",
+                },
+                {
+                  title: "COMPLETED",
+                  id: "completed",
+                  bg: "green",
+                },
+              ],
+            }, undefined, 2)}
+          </code></pre>
+          <Input value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value)} />
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction onClick={() => updateBoardConfig(newBoardConfig.id, newBoardConfig)}>Create</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+
+  )
+}
