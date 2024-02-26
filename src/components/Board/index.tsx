@@ -79,8 +79,7 @@ export const Board = (props: BoardProps & {updateBoardConfig: any}) => {
   useEffect(() => {
     const localCards = localStorage.getItem('cards');;
     if (!localCards) {
-      const {setCards} = useCards();
-      setCards(fakeData);
+      localStorage.setItem('cards', fakeData);
     }
   }, [])
   useEffect(() => console.log("cards changed: ", cards), [cards]);
