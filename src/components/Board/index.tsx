@@ -29,8 +29,8 @@ export type BoardProps = {
   laneConfigArr: LaneConfig[];
 };
 
-export const Board = (props: BoardProps) => {
-  const { title, id, sortProperty, laneConfigArr /*,children*/ } = props;
+export const Board = (props: BoardProps & {updateBoardConfig: any}) => {
+  const { title, id, sortProperty, laneConfigArr, updateBoardConfig /*,children*/ } = props;
   const description = props.description ? props.description : "";
   const text = props.text ? props.text : "";
 
@@ -77,6 +77,7 @@ export const Board = (props: BoardProps) => {
             title={title}
             description={description}
             text={text}
+            updateBoardConfig={updateBoardConfig}
           />
         </CardHeader>
         <CardContent>
