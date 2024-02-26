@@ -234,12 +234,11 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
 
   const updateNewBoardConfig = () => {
     try {
-              const json = JSON.parse(newBoardConfig);
-              setNewBoardConfig(json)
-            } catch (e) {
-              console.log('not valid JSON', e)
-            }
-          }
+      const json = JSON.parse(newBoardConfig);
+      setNewBoardConfig(json)
+    } catch (e) {
+      console.log('not valid JSON', e)
+    }
   }
 
   return (
