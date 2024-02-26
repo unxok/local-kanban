@@ -19,7 +19,7 @@ export const Lane = ({
     <div className="flex w-0 flex-1 flex-col">
       <LaneHeader title={title} bg={bg} len={filteredCardsLength || 0} />
       <LaneBody title={title} id={id} bg={bg} sortProperty={sortProperty} />
-      <LaneFooter />
+      <LaneFooter laneTitle={title} laneId={id} sortProperty={sortProperty} />
       {/* instead of gap, place indicator component here */}
     </div>
   );

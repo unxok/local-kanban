@@ -10,7 +10,7 @@ export const LaneHeader = ({
   len: number;
 }) => (
   <div className="flex flex-row items-center justify-center gap-2 pb-2">
-    <h2 className="font-roboto text-foreground-primary flex flex-row items-center text-sm font-semibold">
+    <h2 className="ubuntu-medium text-foreground-primary flex flex-row items-center text-sm tracking-wider">
       {title}
     </h2>
     <div className="flex flex-row items-center justify-center">

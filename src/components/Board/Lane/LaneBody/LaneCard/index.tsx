@@ -10,6 +10,7 @@ import {
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { LaneCardSheet } from "./LaneCardSheet";
 import { CardProps } from "@/components/CardsProvider";
+import { Badge } from "@/components/ui/badge";
 
 export const LaneCard = (props: CardProps) => {
   const { id, title } = props;
@@ -39,17 +40,8 @@ export const LaneCard = (props: CardProps) => {
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-row gap-2 px-3 py-2">
-        {tags &&
-          tags.map((t) => (
-            <Button
-              key={t}
-              variant={"secondary"}
-              className="h-fit rounded-lg px-2 py-1 text-xs text-primary"
-            >
-              {t}
-            </Button>
-          ))}
+      <CardContent className="flex w-3/4 flex-row flex-wrap gap-2 px-3 py-2">
+        {tags && tags.map((t) => <Badge key={t}>{t}</Badge>)}
       </CardContent>
       <CardFooter className="justify-end p-0">
         <Button className="absolute bottom-0 right-2 py-0" variant={"ghost"}>

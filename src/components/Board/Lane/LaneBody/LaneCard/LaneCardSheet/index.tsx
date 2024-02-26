@@ -14,6 +14,7 @@ import { useState } from "react";
 import { CheckIcon, Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import { CardProps, useCards } from "@/components/CardsProvider";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 export const LaneCardSheet = ({
   id,
@@ -86,7 +87,7 @@ export const StaticSheet = (props: StaticSheetProps) => {
     setCardById(id, newCardData);
   };
   return (
-    <SheetContent className="accent-primary">
+    <SheetContent side="bottom" className="accent-primary">
       <SheetHeader>
         <SheetTitle>
           {/* <Input type="text" defaultValue={title} /> */}
@@ -102,21 +103,11 @@ export const StaticSheet = (props: StaticSheetProps) => {
       </SheetHeader>
       <div className="flex flex-col gap-3 pt-2">
         <p className="flex flex-row gap-2">
-          {tags &&
-            tags.map((t) => (
-              <Button
-                key={t}
-                variant={"secondary"}
-                className="h-fit rounded-lg px-2 py-1 text-xs text-primary"
-              >
-                {t}
-              </Button>
-            ))}
+          {tags && tags.map((t) => <Badge key={t}>{t}</Badge>)}
         </p>
         <LaneCardProperties cardId={id} properties={properties} />
       </div>
       <div className="flex flex-col gap-3 py-5">
-        <Separator />
         <SheetTitle>Notes</SheetTitle>
         <div>{text}</div>
 

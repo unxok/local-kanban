@@ -17,10 +17,16 @@ const CardContext = createContext<{
     cardData: CardProps,
     isToDelete?: boolean,
   ) => void;
+  cardTags: string[] | null;
+  cardFields: string[] | null;
+  getValuesForField: (field: any) => any;
 }>({
   cards: null,
   setCards: () => {},
   setCardById: () => {},
+  cardTags: null,
+  cardFields: null,
+  getValuesForField: () => {},
 });
 
 export const CardsProvider = ({
@@ -48,9 +54,61 @@ export const CardsProvider = ({
     copyCards[foundCardIndex] = cardData;
     setCards(copyCards);
   };
+  const potentialCardTagsArr = !cards
+    ? null
+    : cards
+        .map((card) => (card.tags ? [...card.tags] : null))
+        .flat()
+        .filter((tag) => !!tag);
+
+  const potentialCardTags =
+    potentialCardTagsArr && potentialCardTagsArr.length
+      ? Array.from(new Set(potentialCardTagsArr))
+      : [null];
+  const cardTags = potentialCardTags ? potentialCardTags : null;
+
+  const potentialCardValuesArr = cards?.reduce(
+    (acc, card) => {
+      Object.keys(card?.properties || {}).forEach((field) => {
+        if (!acc.hasOwnProperty(field)) {
+          // @ts-ignore TODO
+          acc[field] = [card.properties[field]];
+          return acc;
+        }
+        // @ts-ignore TODO
+        acc[field].push(card.properties[field]);
+        return acc;
+      });
+      return acc;
+    },
+    {} as { [key: string]: any },
+  );
+  const cardValues = !potentialCardValuesArr
+    ? null
+    : Object.keys(potentialCardValuesArr).reduce((acc, field) => {
+        acc[field] = Array.from(new Set(potentialCardValuesArr[field]));
+        return acc;
+      }, potentialCardValuesArr);
+
+  const cardFields = cardValues ? Object.keys(cardValues) : null;
+  // console.log("fields: ", cardFields);
+  // console.log("values: ", cardValues);
+
+  // @ts-ignore TODO
+  const getValuesForField = (field) => cardValues[field];
 
   return (
-    <CardContext.Provider value={{ cards, setCards, setCardById }}>
+    <CardContext.Provider
+      value={{
+        cards,
+        setCards,
+        setCardById,
+        // @ts-ignore TODO I guess I'm not typing this right because I have checked that it isn't null[] already
+        cardTags,
+        cardFields,
+        getValuesForField,
+      }}
+    >
       {children}
     </CardContext.Provider>
   );
