@@ -174,7 +174,7 @@ function App() {
                 <SheetHeader>
                   <SheetTitle>Settings</SheetTitle>
                   <SheetDescription>
-                    <AddBoardButton updateBoardConfig={updateBoardConfig}  />
+                    <AddBoardButton updateBoardConfig={updateBoardConfig} />
                   </SheetDescription>
                 </SheetHeader>
               </SheetContent>
@@ -227,7 +227,7 @@ function App() {
 
 export default App;
 
-export const AddBoardButton = ({updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
+export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
   //
   const [newBoardConfig, setNewBoardConfig] = useState<BoardProps | null>(null);
 
