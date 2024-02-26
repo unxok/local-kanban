@@ -4,7 +4,7 @@ import { Board, BoardProps } from "./components/Board";
 import { CardsProvider } from "./components/CardsProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { CardDescription, CardTitle } from "./components/ui/card";
-import { Input } from "./components/ui/input";
+import { Textarea } from "./components/ui/textarea";
 import { Separator } from "./components/ui/separator";
 import {
   Select,
@@ -277,7 +277,7 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
               ],
             }, undefined, 2)}
           </code></pre>
-          <Input value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value)} />
+          <Textarea value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value)}></Textarea>
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
