@@ -1,9 +1,8 @@
+ 
+import { buttonVariants } from "@/components/ui/button";
 import {
   AlertDialogHeader,
   AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
-import { buttonVariants } from "@/components/ui/button";
-import {
   AlertDialog,
   AlertDialogTrigger,
   AlertDialogContent,
@@ -11,9 +10,9 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@radix-ui/react-alert-dialog";
+} from "@/components/ui/alert-dialog";
 
-export const BoardDeleteButton = () => {
+export const BoardDeleteButton = ({boardConfig, updateBoardConfig}:{boardConfig: any; updateBoardConfig: any}) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger
@@ -33,6 +32,7 @@ export const BoardDeleteButton = () => {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             className={buttonVariants({ variant: "destructive", size: "sm" })}
+            onClick={() => updateBoardConfig(boardConfig.id, boardConfig, true)}
           >
             Continue
           </AlertDialogAction>
