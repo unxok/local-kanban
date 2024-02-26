@@ -55,7 +55,13 @@ export const CardsProvider = ({
     cardData: CardProps,
     isToDelete?: boolean,
   ) => {
-    if (!cards) return;
+    if (!cards && !isToDelete) {
+      setCards([cardData])
+      localStorage.setItem("cards", JSON.stringify(cardData));
+    };
+    if (!cards && isToDelete) {
+      return;
+    };
     if (isToDelete) {
       const filteredCards = cards.filter((c) => c.id !== cardId);
       setCards(filteredCards);
@@ -74,6 +80,7 @@ export const CardsProvider = ({
     setCards(copyCards);
     localStorage.setItem("cards", JSON.stringify(copyCards));
   };
+  
   const potentialCardTagsArr = !cards
     ? null
     : cards
