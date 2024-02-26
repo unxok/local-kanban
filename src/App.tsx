@@ -235,7 +235,7 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
   const updateNewBoardConfig = () => {
     try {
       const json = JSON.parse(newBoardConfig);
-      setNewBoardConfig(json)
+      updateBoardConfig(json.id, json)
     } catch (e) {
       console.log('not valid JSON', e)
     }
