@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build and add to gh-pages branch
 
 on: 
   push:
@@ -17,6 +17,15 @@ jobs:
       run: |
         git config --global user.email "me@unxok.com"
         git config --global user.name "bot@unxok"
+
+
+    - name: Build
+      run: |
+        npm install
+        npm run build
+        git add .
+        git commit -M "Ran auto build"
+        git push origin main
 
     - name: Commit and Push dist to gh-pages
       run: |
