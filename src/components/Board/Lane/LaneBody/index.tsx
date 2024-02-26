@@ -42,6 +42,7 @@ const getBorderColor = (color: string) => {
 
 export const LaneBody = ({
   id,
+  title,
   bg,
   sortProperty,
 }: LaneConfig & { sortProperty: string }) => {
@@ -68,6 +69,9 @@ export const LaneBody = ({
             properties={c.properties}
             tags={c.tags}
             text={c.text}
+            sortProperty={sortProperty}
+            laneId={id}
+            laneTitle={title}
           />
         ))}
     </div>

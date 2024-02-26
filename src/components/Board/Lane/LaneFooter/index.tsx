@@ -38,6 +38,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -53,7 +55,7 @@ import {
   RowSpacingIcon,
   CaretSortIcon,
 } from "@radix-ui/react-icons";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const LaneFooter = ({
   laneTitle,
@@ -69,7 +71,11 @@ export const LaneFooter = ({
       laneId={laneId}
       laneTitle={laneTitle}
       sortProperty={sortProperty}
-    />
+    >
+      <div className={`w-full ${buttonVariants({ variant: "outline" })}`}>
+        <PlusIcon />
+      </div>
+    </NewCardButton>
     <Button className="w-1/4" variant={"outline"}>
       <DotsVerticalIcon />
     </Button>
@@ -80,83 +86,136 @@ export const NewCardButton = ({
   laneTitle,
   laneId,
   sortProperty,
+  children,
+  defaultCardData,
 }: {
   laneTitle: string;
   laneId: string;
   sortProperty: string;
+  children: any;
+  defaultCardData?: CardProps;
 }) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="w-3/4">
-        <div className={`w-full ${buttonVariants({ variant: "outline" })}`}>
-          <PlusIcon />
-        </div>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger className="w-3/4">{children}</AlertDialogTrigger>
       <NewCardModal
         laneId={laneId}
         laneTitle={laneTitle}
         sortProperty={sortProperty}
+        defaultCardData={defaultCardData}
       />
     </AlertDialog>
   );
 };
 
+export type UpdateNewCardDataFn = (
+  callback: (cardData: CardProps) => any,
+) => void | CardProps | undefined | null;
+
 const NewCardModal = ({
   laneTitle,
   laneId,
   sortProperty,
+  defaultCardData,
 }: {
   laneTitle: string;
   laneId: string;
   sortProperty: string;
+  defaultCardData?: CardProps;
 }) => {
-  const [newCardData, setNewCardData] = useState<CardProps>({
-    title: "Unnamed card",
-    id: "unnamed-card",
-  });
-  console.log(newCardData);
-  const { cardTags } = useCards();
+  const [newCardData, setNewCardData] = useState<CardProps>(
+    defaultCardData || {
+      title: "Unnamed card",
+      id: "unnamed-card",
+      properties: { [sortProperty]: laneId },
+    },
+  );
+  const { cardTags, setCardById } = useCards();
 
-  const updateNewCardData = (
-    e: FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    if (!e || !e.currentTarget) return;
+  useEffect(() => console.log("new card: ", newCardData), [newCardData]);
 
-    const {
-      currentTarget: { id, value },
-    } = e;
-    setNewCardData((card) => ({
-      ...card,
-      [id]: value,
-    }));
+  const updateNewCardData: UpdateNewCardDataFn = (callback) => {
+    const data = { ...newCardData };
+    if (typeof callback !== "function") {
+      setNewCardData(callback);
+      return;
+    }
+    const newData = callback(data);
+    if (newData === undefined) return;
+    setNewCardData(newData);
   };
 
   return (
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>New Card</AlertDialogTitle>
-        <AlertDialogDescription>
-          Creating a new card in the{" "}
-          <span className="text-primary">{laneTitle}</span> Lane
-        </AlertDialogDescription>
-        <div className="flex flex-col gap-3 pt-3">
-          <TitleInput updateNewCardData={updateNewCardData} />
-          <DescriptionInput updateNewCardData={updateNewCardData} />
-          <TagsInput
-            setNewCardData={setNewCardData}
-            cardTags={cardTags}
-          ></TagsInput>
-          <PropertiesInput
-            laneId={laneId}
-            laneTitle={laneTitle}
-            sortProperty={sortProperty}
-          ></PropertiesInput>
-          <NotesInput updateNewCardData={updateNewCardData} />
+    <AlertDialogContent className="p-0">
+      <ScrollArea className="max-h-[80vh] p-5 pb-0">
+        {/* <div> */}
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {defaultCardData ? (
+              <span>
+                Editing the&nbsp;
+                <span className="text-primary">{defaultCardData.title}</span>
+                &nbsp;card
+              </span>
+            ) : (
+              "New Card"
+            )}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            Creating a new card in the{" "}
+            <span className="text-primary">{laneTitle}</span> Lane
+          </AlertDialogDescription>
+          <div className="flex flex-col gap-3 py-3">
+            <TitleInput
+              defaultVal={newCardData.title}
+              updateNewCardData={updateNewCardData}
+            />
+            <DescriptionInput
+              defaultVal={newCardData.description}
+              updateNewCardData={updateNewCardData}
+            />
+            <TagsInput
+              updateNewCardData={updateNewCardData}
+              cardTags={cardTags}
+              defaultVal={newCardData.tags}
+            ></TagsInput>
+            <PropertiesInput
+              laneId={laneId}
+              laneTitle={laneTitle}
+              sortProperty={sortProperty}
+              updateNewCardData={updateNewCardData}
+              defaultVal={newCardData.properties}
+            ></PropertiesInput>
+            <NotesInput
+              updateNewCardData={updateNewCardData}
+              defaultVal={newCardData.text}
+            />
+          </div>
+        </AlertDialogHeader>
+        {/* </div> */}
+      </ScrollArea>
+      <Separator />
+      <AlertDialogFooter className="flex flex-row p-5 pt-0">
+        <div className="flex w-full flex-row justify-start">
+          {defaultCardData && (
+            <AlertDialogAction
+              className={buttonVariants({ variant: "destructiveGhost" })}
+              onClick={() => setCardById(newCardData.id, newCardData, true)}
+            >
+              Delete
+            </AlertDialogAction>
+          )}
         </div>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction>Create</AlertDialogAction>
+        <div className="flex w-full flex-row justify-end gap-3">
+          <AlertDialogCancel onClick={() => console.log("cancelled")}>
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => setCardById(newCardData.id, newCardData)}
+          >
+            {defaultCardData ? "Update" : "Create"}
+          </AlertDialogAction>
+        </div>
       </AlertDialogFooter>
     </AlertDialogContent>
   );
@@ -164,8 +223,10 @@ const NewCardModal = ({
 
 const TitleInput = ({
   updateNewCardData,
+  defaultVal,
 }: {
-  updateNewCardData: (e: FormEvent<HTMLInputElement>) => void;
+  updateNewCardData: UpdateNewCardDataFn;
+  defaultVal: string;
 }) => {
   //
   return (
@@ -176,8 +237,17 @@ const TitleInput = ({
         name="title"
         type="text"
         placeholder="Do a thing"
+        defaultValue={defaultVal}
         className="w-3/4"
-        onInput={(e) => updateNewCardData(e)}
+        onInput={(e) =>
+          updateNewCardData((prev) => {
+            if (!e.target) return;
+            if (!(e.target as HTMLInputElement).id) return;
+            if (!(e.target as HTMLInputElement).value) return;
+            const { id, value } = e.target as HTMLInputElement;
+            return { ...prev, [id]: value, id: value };
+          })
+        }
       />
     </span>
   );
@@ -185,8 +255,10 @@ const TitleInput = ({
 
 const DescriptionInput = ({
   updateNewCardData,
+  defaultVal,
 }: {
-  updateNewCardData: (e: FormEvent<HTMLInputElement>) => void;
+  updateNewCardData: UpdateNewCardDataFn;
+  defaultVal?: string | null;
 }) => {
   //
   return (
@@ -197,126 +269,52 @@ const DescriptionInput = ({
         name="description"
         type="text"
         placeholder="Optional details about doing a thing"
+        defaultValue={defaultVal || undefined}
         className="w-3/4"
-        onInput={(e) => updateNewCardData(e)}
+        onInput={(e) =>
+          updateNewCardData((prev) => {
+            if (!e.target) return;
+            if (!(e.target as HTMLInputElement).id) return;
+            if (!(e.target as HTMLInputElement).value) return;
+            const { id, value } = e.target as HTMLInputElement;
+            return { ...prev, [id]: value };
+          })
+        }
       />
     </span>
   );
 };
 
-const PropertiesInput = ({
-  // laneTitle,
-  laneId,
-  sortProperty,
-}: {
-  laneTitle: string;
-  laneId: string;
-  sortProperty: string;
-}) => {
-  const [searchField, setSearchField] = useState("");
-  const { cardFields, getValuesForField } = useCards();
-  // const [unusedFields, setUnusedFields] = useState(cardFields);
-  const [newProperties, setNewProperties] = useState<any>({
-    [sortProperty]: laneId,
-  });
-
-  const updateProperties = (field: string, value: string | undefined) => {
-    setNewProperties((prev: any) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl">Properties</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Popover>
-          <PopoverTrigger className={buttonVariants({ variant: "outline" })}>
-            search field names&nbsp;
-            <CaretSortIcon />
-          </PopoverTrigger>
-          <PopoverContent side="top">
-            <Command>
-              <CommandInput
-                placeholder="search known fields"
-                value={searchField}
-                onInput={(e) => setSearchField(e.currentTarget.value)}
-              />
-              <CommandEmpty>Field not found or already used</CommandEmpty>
-              <CommandGroup>
-                {cardFields &&
-                  cardFields.map((field) => (
-                    <CommandItem
-                      key={field}
-                      value={field}
-                      onSelect={(val) => updateProperties(val, undefined)}
-                    >
-                      {field}
-                    </CommandItem>
-                  ))}
-                {searchField && (
-                  <CommandItem
-                    onSelect={() => updateProperties(searchField, undefined)}
-                  >
-                    add new field:&nbsp;{searchField}
-                  </CommandItem>
-                )}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Property Name</TableHead>
-              <TableHead>Field Value</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {Object.keys(newProperties).map((property) => (
-              <TableRow key={property + "-property-row"}>
-                <TableCell>{property}</TableCell>
-                <TableCell>
-                  <PropertyValueComboBox
-                    key={property + "-value-combo-box"}
-                    valueOptions={getValuesForField(property)}
-                    defaultVal={newProperties[property]}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-};
-
 const TagsInput = ({
   cardTags,
-  setNewCardData,
+  updateNewCardData,
+  defaultVal,
 }: {
   cardTags: string[] | null;
-  setNewCardData: React.Dispatch<React.SetStateAction<CardProps>>;
+  updateNewCardData: UpdateNewCardDataFn;
+  defaultVal?: string[] | null;
 }) => {
   // something
-  const [newTags, setNewTags] = useState<string[] | null>(null);
+  const [newTags, setNewTags] = useState<string[] | null>(defaultVal || null);
   const [unusedTags, setUnusedTags] = useState(cardTags);
+
+  const updateTags = (callback: (tags: string[] | null) => string[] | null) => {
+    const tagsArr = callback(newTags);
+    setNewTags(tagsArr);
+    updateNewCardData((prev) => {
+      return { ...prev, tags: tagsArr };
+    });
+    // console.log("did it update?");
+  };
 
   const addTag = (tag: string) => {
     if (!newTags) {
-      setNewTags((_) => [tag]);
+      updateTags((_) => [tag]);
       setUnusedTags((prev) => (prev ? prev.filter((t) => t !== tag) : null));
       return;
     }
     if (!newTags.includes(tag)) {
-      const updatedTags = newTags ? [...newTags] : [];
-      updatedTags.push(tag);
-
-      setNewTags((prev) => [...(prev as string[]), tag]);
+      updateTags((prev) => [...(prev as string[]), tag]);
     }
     setUnusedTags((prev) => (prev ? prev.filter((t) => t !== tag) : null));
   };
@@ -324,7 +322,7 @@ const TagsInput = ({
   const removeTag = (tag: string) => {
     if (!newTags) return;
     const updatedTagArr = newTags.filter((t) => t !== tag);
-    setNewTags(updatedTagArr);
+    updateTags(() => updatedTagArr);
     if (unusedTags) {
       const newUnusedTags = [...unusedTags];
       newUnusedTags.push(tag);
@@ -332,17 +330,12 @@ const TagsInput = ({
     }
   };
 
-  useEffect(() => {
-    setNewCardData((card) => ({
-      ...card,
-      tags: newTags,
-    }));
-  }, [newTags]);
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">Tags</CardTitle>
+        <CardTitle className="ubuntu-regular text-xl tracking-wide">
+          Tags
+        </CardTitle>
         <AllTagsSearch addTag={addTag} unusedTags={unusedTags}></AllTagsSearch>
       </CardHeader>
       <CardContent>
@@ -428,7 +421,9 @@ const SelectedTags = ({
   // ss
   return (
     <>
-      <CardTitle>Selected tags</CardTitle>
+      <CardTitle className="ubuntu-regular tracking-wide">
+        Selected tags
+      </CardTitle>
       <CardDescription>click to remove</CardDescription>
       {cardTags ? (
         <div className="flex flex-row flex-wrap gap-1">
@@ -467,7 +462,7 @@ const AllTagsSelector = ({
   return (
     <Collapsible>
       <CollapsibleTrigger>
-        <CardTitle className="flex flex-row items-center gap-1">
+        <CardTitle className="ubuntu-regular flex flex-row items-center gap-1 text-xl tracking-wide">
           All tags{" "}
           <RowSpacingIcon
             color={`hsl(${window
@@ -503,17 +498,139 @@ const AllTagsSelector = ({
   );
 };
 
+const PropertiesInput = ({
+  // laneTitle,
+  laneId,
+  sortProperty,
+  updateNewCardData,
+  defaultVal,
+}: {
+  laneTitle: string;
+  laneId: string;
+  sortProperty: string;
+  updateNewCardData: UpdateNewCardDataFn;
+  defaultVal?: { [key: string]: any } | null;
+}) => {
+  const [searchField, setSearchField] = useState("");
+  const { cardFields, getValuesForField } = useCards();
+  // const [unusedFields, setUnusedFields] = useState(cardFields);
+  const [newProperties, setNewProperties] = useState<any>(
+    defaultVal || {
+      [sortProperty]: laneId,
+    },
+  );
+
+  const updateProperties = (field: string, value: string | undefined) => {
+    setNewProperties((prev: any) => {
+      // if (prev.hasOwnProperty(field)) return prev;
+      const props = {
+        ...prev,
+        [field]: value,
+      };
+      updateNewCardData((prev) => ({ ...prev, properties: props }));
+      return props;
+    });
+  };
+
+  // TODO should really break this into at least one more component
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="ubuntu-regular text-xl tracking-wide">
+          Properties
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Popover>
+          <PopoverTrigger className={buttonVariants({ variant: "outline" })}>
+            search field names&nbsp;
+            <CaretSortIcon />
+          </PopoverTrigger>
+          <PopoverContent side="top">
+            <Command>
+              <CommandInput
+                placeholder="search known fields"
+                value={searchField}
+                onInput={(e) => setSearchField(e.currentTarget.value)}
+              />
+              <CommandEmpty
+                onSelect={() => updateProperties(searchField, undefined)}
+              >
+                add new field:&nbsp;
+                <span className="text-primary">{searchField}</span>
+              </CommandEmpty>
+              <CommandGroup>
+                {cardFields &&
+                  cardFields.map((field) => (
+                    <CommandItem
+                      key={field}
+                      value={field}
+                      onSelect={(val) => updateProperties(val, undefined)}
+                    >
+                      {field}
+                    </CommandItem>
+                  ))}
+                {searchField && (
+                  <CommandItem
+                    onSelect={() => updateProperties(searchField, undefined)}
+                  >
+                    add new field:&nbsp;{" "}
+                    <span className="text-primary">{searchField}</span>
+                  </CommandItem>
+                )}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Property Name</TableHead>
+              <TableHead>Field Value</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Object.keys(newProperties).map((property) => (
+              <TableRow key={property + "-property-row"}>
+                <TableCell>{property}</TableCell>
+                <TableCell>
+                  <PropertyValueComboBox
+                    valueOptions={getValuesForField(property)}
+                    propertyName={property}
+                    updateProperties={updateProperties}
+                    defaultVal={newProperties[property]}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+};
+
 const PropertyValueComboBox = ({
   valueOptions,
   defaultVal,
+  propertyName,
+  updateProperties,
 }: {
   valueOptions: string[] | null;
   defaultVal?: string;
+  propertyName: string;
+  updateProperties: (field: string, value: string | undefined) => void;
 }) => {
   const [chosenValue, setChosenValue] = useState(defaultVal || "click to set");
   const [searchValue, setSearchValue] = useState("");
 
-  useEffect(() => console.log(searchValue), [searchValue]);
+  const updateValue = (val: string) => {
+    console.log(val);
+    setChosenValue(val);
+    updateProperties(propertyName, val);
+  };
+
+  // useEffect(() => console.log(searchValue), [searchValue]);
 
   return (
     <Popover>
@@ -526,11 +643,11 @@ const PropertyValueComboBox = ({
           />
           <CommandGroup>
             {valueOptions &&
-              valueOptions.map((val) => (
+              valueOptions.map((val, i) => (
                 <CommandItem
-                  key={val}
+                  key={val + i}
                   value={val}
-                  onSelect={(v) => setChosenValue(v)}
+                  onSelect={(v) => updateValue(v)}
                 >
                   {val}
                 </CommandItem>
@@ -539,7 +656,7 @@ const PropertyValueComboBox = ({
             {searchValue && (
               <CommandItem
                 value={searchValue}
-                onSelect={() => setChosenValue(searchValue)}
+                onSelect={() => updateValue(searchValue)}
               >
                 Add new value:&nbsp;
                 <span className="text-primary">{searchValue}</span>
@@ -554,22 +671,46 @@ const PropertyValueComboBox = ({
 
 const NotesInput = ({
   updateNewCardData,
+  defaultVal,
 }: {
-  updateNewCardData: (
-    e: FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  updateNewCardData: UpdateNewCardDataFn;
+  defaultVal?: string | null;
 }) => {
   //
+
   return (
-    <span className="flex flex-row items-center justify-between">
-      <Label htmlFor="title">Description</Label>
-      <Textarea
-        id="text"
-        name="text"
-        placeholder="Optional notes about doing a thing"
-        className="w-3/4"
-        onInput={(e) => updateNewCardData(e)}
-      />
-    </span>
+    <Card>
+      <CardHeader>
+        <CardTitle className="ubuntu-regular text-xl tracking-wide">
+          Notes
+        </CardTitle>
+        <CardDescription>
+          <i>**Markdown**</i> supported :heart:
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="relative overflow-y-visible">
+        {/* <span className="flex flex-row items-start justify-between pb-1 pt-3"> */}
+        <Label htmlFor="text" className="sr-only">
+          Description
+        </Label>
+        <Textarea
+          id="text"
+          name="text"
+          defaultValue={defaultVal || undefined}
+          placeholder="Optional notes about doing a thing"
+          className="h-[40vh]"
+          onInput={(e) => {
+            return updateNewCardData((prev) => {
+              if (!e.target) return;
+              if (!(e.target as HTMLInputElement).id) return;
+              if (!(e.target as HTMLInputElement).value) return;
+              const { id, value } = e.target as HTMLInputElement;
+              return { ...prev, [id]: value };
+            });
+          }}
+        />
+        {/* </span> */}
+      </CardContent>
+    </Card>
   );
 };

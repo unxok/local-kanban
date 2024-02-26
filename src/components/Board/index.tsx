@@ -26,7 +26,6 @@ export type BoardProps = {
   description?: string;
   text?: string;
   sortProperty: string;
-  children?: any;
   laneConfigArr: LaneConfig[];
 };
 

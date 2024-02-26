@@ -8,12 +8,18 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { LaneCardSheet } from "./LaneCardSheet";
 import { CardProps } from "@/components/CardsProvider";
 import { Badge } from "@/components/ui/badge";
+import { LaneCardSheet } from "./LaneCardSheet";
 
-export const LaneCard = (props: CardProps) => {
-  const { id, title } = props;
+export const LaneCard = (
+  props: CardProps & {
+    sortProperty: string;
+    laneId: string;
+    laneTitle: string;
+  },
+) => {
+  const { id, title, sortProperty, laneId, laneTitle } = props;
   const description = props.description ? props.description : "";
   const text = props.text ? props.text : "";
   const tags = props.tags ? props.tags : [];
@@ -24,7 +30,7 @@ export const LaneCard = (props: CardProps) => {
       draggable
       className="relative hover:cursor-grab hover:border-primary active:hover:cursor-grabbing"
     >
-      <CardHeader className="px-3 pb-1 pt-0">
+      <CardHeader className="px-3 pb-1 pt-3">
         <CardTitle>
           {/* This is the sheet pop up with editable information */}
           <LaneCardSheet
@@ -34,13 +40,16 @@ export const LaneCard = (props: CardProps) => {
             properties={properties}
             tags={tags}
             text={text}
+            laneId={laneId}
+            laneTitle={laneTitle}
+            sortProperty={sortProperty}
           />
         </CardTitle>
         <CardDescription className="truncate text-xs">
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex w-3/4 flex-row flex-wrap gap-2 px-3 py-2">
+      <CardContent className="flex w-5/6 flex-row flex-wrap gap-2 px-3 py-2">
         {tags && tags.map((t) => <Badge key={t}>{t}</Badge>)}
       </CardContent>
       <CardFooter className="justify-end p-0">

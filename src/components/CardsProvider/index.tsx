@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 export type CardProps = {
   title: string;
@@ -20,6 +20,10 @@ const CardContext = createContext<{
   cardTags: string[] | null;
   cardFields: string[] | null;
   getValuesForField: (field: any) => any;
+  getCardsByPropValue: (
+    propertyName: string,
+    propertyValue: string,
+  ) => CardProps[] | undefined;
 }>({
   cards: null,
   setCards: () => {},
@@ -27,16 +31,25 @@ const CardContext = createContext<{
   cardTags: null,
   cardFields: null,
   getValuesForField: () => {},
+  getCardsByPropValue: () => undefined,
 });
 
 export const CardsProvider = ({
   children,
-  localCards,
+  // localCards,
 }: {
-  localCards: CardProps[] | null;
+  // localCards: CardProps[] | null;
   children: any;
 }) => {
-  const [cards, setCards] = useState<CardProps[] | null>(localCards);
+  const [cards, setCards] = useState<CardProps[] | null>(null);
+
+  useEffect(() => {
+    const lsCards = localStorage.getItem("cards");
+    if (!lsCards) return;
+    const parsedCards = JSON.parse(lsCards);
+    setCards(parsedCards);
+  }, []);
+
   const setCardById = (
     cardId: string,
     cardData: CardProps,
@@ -46,13 +59,20 @@ export const CardsProvider = ({
     if (isToDelete) {
       const filteredCards = cards.filter((c) => c.id !== cardId);
       setCards(filteredCards);
+      localStorage.setItem("cards", JSON.stringify(filteredCards));
       return;
     }
 
     const foundCardIndex = cards.findIndex((c) => c.id === cardId);
+    if (foundCardIndex === -1) {
+      setCards([...cards, cardData]);
+      localStorage.setItem("cards", JSON.stringify([...cards, cardData]));
+      return;
+    }
     const copyCards = [...cards];
     copyCards[foundCardIndex] = cardData;
     setCards(copyCards);
+    localStorage.setItem("cards", JSON.stringify(copyCards));
   };
   const potentialCardTagsArr = !cards
     ? null
@@ -96,6 +116,11 @@ export const CardsProvider = ({
 
   // @ts-ignore TODO
   const getValuesForField = (field) => cardValues[field];
+  const getCardsByPropValue = (propertyName: string, propertyValue: string) => {
+    return cards?.filter(
+      (c) => c.properties && c.properties[propertyName] === propertyValue,
+    );
+  };
 
   return (
     <CardContext.Provider
@@ -107,6 +132,7 @@ export const CardsProvider = ({
         cardTags,
         cardFields,
         getValuesForField,
+        getCardsByPropValue,
       }}
     >
       {children}
