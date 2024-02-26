@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useCards } from "../CardsProvider";
+import { useCards, CardProps } from "../CardsProvider";
 import { BoardMenuButton } from "./BoardMenuButton";
 import { useEffect, useState } from "react";
 import { LayoutIcon, ListBulletIcon } from "@radix-ui/react-icons";
@@ -77,7 +77,7 @@ export const Board = (props: BoardProps & {updateBoardConfig: any}) => {
   const { cards } = useCards();
 
   useEffect(() => {
-    const localCards = localStore.getItem('cards');;
+    const localCards = localStorage.getItem('cards');;
     if (!localCards) {
       const {setCards} = useCards();
       setCards(fakeData);
