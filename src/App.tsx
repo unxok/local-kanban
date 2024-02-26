@@ -230,7 +230,17 @@ export default App;
 
 export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
   //
-  const [newBoardConfig, setNewBoardConfig] = useState<BoardProps | any>(null);
+  const [newBoardConfig, setNewBoardConfig] = useState<string>("");
+
+  const updateNewBoardConfig = () => {
+    try {
+              const json = JSON.parse(newBoardConfig);
+              setNewBoardConfig(json)
+            } catch (e) {
+              console.log('not valid JSON', e)
+            }
+          }
+  }
 
   return (
     <AlertDialog>
@@ -268,19 +278,12 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
               ],
             }, undefined, 2)}
           </code></pre>
-          <Input value={newBoardConfig} onChange={e => {
-            try {
-              const json = JSON.parse(e.currentTarget.value);
-              setNewBoardConfig(json)
-            } catch (e) {
-              console.log('not valid JSON', e)
-            }
-          }} />
+          <Input value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value) />
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction onClick={() => updateBoardConfig(newBoardConfig.id, newBoardConfig)}>Create</AlertDialogAction>
+        <AlertDialogAction onClick={() => updateNewBoardConfig()}>Create</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
