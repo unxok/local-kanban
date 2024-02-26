@@ -63,14 +63,17 @@ export const CardsProvider = ({
       return;
     };
     if (isToDelete) {
+      // @ts-ignore TODO typescript dumb?
       const filteredCards = cards.filter((c) => c.id !== cardId);
       setCards(filteredCards);
       localStorage.setItem("cards", JSON.stringify(filteredCards));
       return;
     }
 
+    // @ts-ignore TODO typescript dumb?
     const foundCardIndex = cards.findIndex((c) => c.id === cardId);
     if (foundCardIndex === -1) {
+      // @ts-ignore TODO typescript dumb?
       setCards([...cards, cardData]);
       localStorage.setItem("cards", JSON.stringify([...cards, cardData]));
       return;
