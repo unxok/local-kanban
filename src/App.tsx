@@ -186,6 +186,7 @@ function App() {
                   <SheetTitle>Settings</SheetTitle>
                   <SheetDescription>
                     <AddBoardButton updateBoardConfig={updateBoardConfig} />
+                    <ClearDataButton />
                   </SheetDescription>
                 </SheetHeader>
               </SheetContent>
