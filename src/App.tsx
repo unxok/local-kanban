@@ -278,7 +278,7 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
               ],
             }, undefined, 2)}
           </code></pre>
-          <Input value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value) />
+          <Input value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value)} />
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
