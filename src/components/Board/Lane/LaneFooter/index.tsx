@@ -114,7 +114,8 @@ const NewCardModal = ({
     title: "Unnamed card",
     id: "unnamed-card",
   });
-  const { cardTags, cardFields, getValuesForField } = useCards();
+  console.log(newCardData);
+  const { cardTags } = useCards();
 
   const updateNewCardData = (
     e: FormEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -204,7 +205,7 @@ const DescriptionInput = ({
 };
 
 const PropertiesInput = ({
-  laneTitle,
+  // laneTitle,
   laneId,
   sortProperty,
 }: {
@@ -214,7 +215,7 @@ const PropertiesInput = ({
 }) => {
   const [searchField, setSearchField] = useState("");
   const { cardFields, getValuesForField } = useCards();
-  const [unusedFields, setUnusedFields] = useState(cardFields);
+  // const [unusedFields, setUnusedFields] = useState(cardFields);
   const [newProperties, setNewProperties] = useState<any>({
     [sortProperty]: laneId,
   });

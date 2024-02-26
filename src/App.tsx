@@ -1,9 +1,4 @@
-import {
-  ArrowRightIcon,
-  ArrowTopRightIcon,
-  DoubleArrowRightIcon,
-  GearIcon,
-} from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, GearIcon } from "@radix-ui/react-icons";
 import "./App.css";
 import { Board, LaneConfig } from "./components/Board";
 import { CardProps, CardsProvider } from "./components/CardsProvider";
@@ -18,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button, buttonVariants } from "./components/ui/button";
+import { buttonVariants } from "./components/ui/button";
 import {
   Sheet,
   SheetTrigger,
@@ -27,7 +22,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "./components/ui/sheet";
-import { DropdownMenuItem } from "./components/ui/dropdown-menu";
 
 const fakeData: CardProps[] = [
   {
