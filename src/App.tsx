@@ -184,7 +184,7 @@ function App() {
               <SheetContent side={"left"}>
                 <SheetHeader>
                   <SheetTitle>Settings</SheetTitle>
-                  <SheetDescription>
+                  <SheetDescription className="flex flex-col gap-3">
                     <AddBoardButton updateBoardConfig={updateBoardConfig} />
                     <ClearDataButton />
                   </SheetDescription>
@@ -205,7 +205,7 @@ function App() {
                   </SelectTrigger>
                   <SelectContent className="relative">
                     <SelectItem value="default">All Boards</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
+{/*                     <SelectItem value="dark">Dark</SelectItem> */}
                     <SelectItem className="text-primary" value="system">
                       <span className="flex w-full flex-row items-center gap-1">
                         Manage views
@@ -305,7 +305,7 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
 export const ClearDataButton = () => {
   return (
     <AlertDialog>
-    <AlertDialogTrigger className={buttonVariants({variant: 'destructive'})}>
+    <AlertDialogTrigger className={buttonVariants({variant: 'destructiveGhost'})}>
         Clear all data
       </AlertDialogTrigger>
     <AlertDialogContent>
