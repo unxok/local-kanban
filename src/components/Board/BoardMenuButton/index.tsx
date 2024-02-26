@@ -11,8 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const BoardMenuButton = (props: BoardProps) => {
-  const { title } = props;
+export const BoardMenuButton = (props: BoardProps & {updateBoardConfig: any}) => {
+  const { title, updateBoardConfig } = props;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={buttonVariants({ variant: "ghost" })}>
@@ -27,7 +27,7 @@ export const BoardMenuButton = (props: BoardProps) => {
         <DropdownMenuItem>Import</DropdownMenuItem>
         <DropdownMenuSeparator />
 
-        <BoardDeleteButton />
+        <BoardDeleteButton boardConfig={props} updateBoardConfig={updateBoardConfig} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
