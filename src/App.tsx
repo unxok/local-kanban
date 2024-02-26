@@ -275,7 +275,7 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
             } catch (e) {
               console.log('not valid JSON', e)
             }
-          } />
+          }} />
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
