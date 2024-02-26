@@ -24,7 +24,7 @@ jobs:
         npm install
         npm run build
         git add .
-        git commit -M "Ran auto build"
+        git commit -m "Ran auto build"
         git push origin main
 
     - name: Commit and Push dist to gh-pages
