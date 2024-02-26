@@ -4,6 +4,7 @@ import { Board, BoardProps } from "./components/Board";
 import { CardsProvider } from "./components/CardsProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { CardDescription, CardTitle } from "./components/ui/card";
+import { Input } from "./components/ui/input";
 import { Separator } from "./components/ui/separator";
 import {
   Select,
@@ -74,48 +75,48 @@ import { ScrollArea } from "./components/ui/scroll-area";
 //   },
 // ];
 
-const fakeLaneConfig: LaneConfig[] = [
-  {
-    title: "TO DO",
-    id: "to-do",
-    bg: "red",
-  },
-  {
-    title: "IN PROGRESS",
-    id: "in-progress",
-    bg: "blue",
-  },
-  {
-    title: "COMPLETED",
-    id: "completed",
-    bg: "green",
-  },
-];
+// const fakeLaneConfig: LaneConfig[] = [
+//   {
+//     title: "TO DO",
+//     id: "to-do",
+//     bg: "red",
+//   },
+//   {
+//     title: "IN PROGRESS",
+//     id: "in-progress",
+//     bg: "blue",
+//   },
+//   {
+//     title: "COMPLETED",
+//     id: "completed",
+//     bg: "green",
+//   },
+// ];
 
-const fakeBoardConfig: BoardProps = {
-  id: "unxoks-board",
-  title: "Unxoks Saved Tasks",
-  description: "a short description",
-  text: "bleep bloop bloop",
-  sortProperty: "status",
-  laneConfigArr: [
-    {
-      title: "TO DO",
-      id: "to-do",
-      bg: "red",
-    },
-    {
-      title: "IN PROGRESS",
-      id: "in-progress",
-      bg: "blue",
-    },
-    {
-      title: "COMPLETED",
-      id: "completed",
-      bg: "green",
-    },
-  ],
-};
+// const fakeBoardConfig: BoardProps = {
+//   id: "unxoks-board",
+//   title: "Unxoks Saved Tasks",
+//   description: "a short description",
+//   text: "bleep bloop bloop",
+//   sortProperty: "status",
+//   laneConfigArr: [
+//     {
+//       title: "TO DO",
+//       id: "to-do",
+//       bg: "red",
+//     },
+//     {
+//       title: "IN PROGRESS",
+//       id: "in-progress",
+//       bg: "blue",
+//     },
+//     {
+//       title: "COMPLETED",
+//       id: "completed",
+//       bg: "green",
+//     },
+//   ],
+// };
 
 function App() {
   const [boardConfigs, setBoardConfigs] = useState<BoardProps[] | undefined>();
@@ -229,7 +230,7 @@ export default App;
 
 export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
   //
-  const [newBoardConfig, setNewBoardConfig] = useState<BoardProps | null>(null);
+  const [newBoardConfig, setNewBoardConfig] = useState<BoardProps | any>(null);
 
   return (
     <AlertDialog>
