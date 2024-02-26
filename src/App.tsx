@@ -127,10 +127,11 @@ function App() {
     console.log(JSON.parse(boards));
   }, []);
 
-  const updateBoardConfig = (id: string, newConfig: BoardProps) => {
+  const updateBoardConfig = (id: string, newConfig: BoardProps, isDelete?: boolean) => {
     if (!boardConfigs) {
       setBoardConfigs([newConfig]);
       localStorage.setItem("boards", JSON.stringify([newConfig]));
+      return;
     }
     const foundBoard = boardConfigs?.find((b) => b.id === id);
     if (!foundBoard) {
@@ -140,10 +141,19 @@ function App() {
         localStorage.setItem("boards", JSON.stringify([newBoards]));
         return newBoards;
       });
+      return;
     }
     const filteredBoards = boardConfigs?.filter((b) => b.id !== id);
     if (!filteredBoards) {
       throw new Error("You shouldn't be seeing this. Check App.tsx line 110");
+    }
+    if (isDelete) {
+      setBoardConfigs(filteredBoards);
+      localStorage.setItem(
+        "boards",
+        JSON.stringify(filteredBoards)
+      );  
+      return;
     }
     setBoardConfigs([...filteredBoards, newConfig]);
     localStorage.setItem(
@@ -215,6 +225,7 @@ function App() {
                       description={board.description}
                       sortProperty={board.sortProperty}
                       laneConfigArr={board.laneConfigArr}
+                      updateBoardConfig={updateBoardConfig}
                     ></Board>
                   ))}
               </div>
@@ -289,3 +300,27 @@ export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: str
 
   )
 }
+
+export const ClearDataButton = () => {
+  return (
+    <AlertDialog>
+    <AlertDialogTrigger className={buttonVariants({variant: 'destructive'})}>
+        Clear all data
+      </AlertDialogTrigger>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Clear All Saved Data</AlertDialogTitle>
+        <AlertDialogDescription>
+         This action cannot be undone. Are you sure?
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction onClick={() => localStorage.clear()}>Confirm</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+
+  )
+}
+
