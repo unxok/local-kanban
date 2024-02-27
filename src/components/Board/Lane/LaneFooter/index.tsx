@@ -128,12 +128,13 @@ const NewCardModal = ({
   defaultCardData?: CardProps;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const cardPropsTemplate = {
+    title: "Unnamed card",
+    id: "unnamed-card",
+    properties: { [sortProperty]: laneId },
+  };
   const [newCardData, setNewCardData] = useState<CardProps>(
-    defaultCardData || {
-      title: "Unnamed card",
-      id: "unnamed-card",
-      properties: { [sortProperty]: laneId },
-    },
+    defaultCardData || cardPropsTemplate,
   );
   const { cardTags, setCardById } = useCards();
 
@@ -212,13 +213,19 @@ const NewCardModal = ({
           )}
         </div>
         <div className="flex w-full flex-row justify-end gap-3">
-          <AlertDialogCancel onClick={() => setIsOpen(false)}>
+          <AlertDialogCancel
+            onClick={() => {
+              setIsOpen(false);
+              setNewCardData(cardPropsTemplate);
+            }}
+          >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
               setCardById(newCardData.id, newCardData);
               setIsOpen(false);
+              setNewCardData(() => cardPropsTemplate);
             }}
           >
             {defaultCardData ? "Update" : "Create"}

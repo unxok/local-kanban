@@ -1,19 +1,11 @@
-import { ArrowTopRightIcon, GearIcon } from "@radix-ui/react-icons";
+import { GearIcon } from "@radix-ui/react-icons";
 import "./App.css";
 import { Board, BoardProps } from "./components/Board";
 import { CardsProvider } from "./components/CardsProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { CardDescription, CardTitle } from "./components/ui/card";
 import { Textarea } from "./components/ui/textarea";
-import { Separator } from "./components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { buttonVariants } from "./components/ui/button";
+import { Button, buttonVariants } from "./components/ui/button";
 import {
   Sheet,
   SheetTrigger,
@@ -32,9 +24,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
-import { ScrollArea } from "./components/ui/scroll-area";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "./components/ui/resizable";
 
 // const fakeData: CardProps[] = [
 //   {
@@ -127,7 +123,11 @@ function App() {
     console.log(JSON.parse(boards));
   }, []);
 
-  const updateBoardConfig = (id: string, newConfig: BoardProps, isDelete?: boolean) => {
+  const updateBoardConfig = (
+    id: string,
+    newConfig: BoardProps,
+    isDelete?: boolean,
+  ) => {
     if (!boardConfigs) {
       setBoardConfigs([newConfig]);
       localStorage.setItem("boards", JSON.stringify([newConfig]));
@@ -138,7 +138,7 @@ function App() {
       setBoardConfigs((prev) => {
         if (!prev) return [newConfig];
         const newBoards = [...prev, newConfig];
-        localStorage.setItem("boards", JSON.stringify([newBoards]));
+        localStorage.setItem("boards", JSON.stringify(newBoards));
         return newBoards;
       });
       return;
@@ -149,10 +149,7 @@ function App() {
     }
     if (isDelete) {
       setBoardConfigs(filteredBoards);
-      localStorage.setItem(
-        "boards",
-        JSON.stringify(filteredBoards)
-      );  
+      localStorage.setItem("boards", JSON.stringify(filteredBoards));
       return;
     }
     setBoardConfigs([...filteredBoards, newConfig]);
@@ -165,163 +162,324 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <CardsProvider>
-        <div className="bg-background-secondary fixed inset-0 flex flex-col">
-          <div className="flex flex-row items-center justify-between p-3">
-            <div>
-              <CardTitle className="ubuntu-medium text-3xl text-primary">
-                Local Kanban
-              </CardTitle>
-              <CardDescription>
-                Smooth and easy task management that works completely offline
-              </CardDescription>
-            </div>
-            <Sheet>
-              <SheetTrigger
-                className={`p-3 ${buttonVariants({ variant: "ghost" })}`}
-              >
-                <GearIcon />
-              </SheetTrigger>
-              <SheetContent side={"left"}>
-                <SheetHeader>
-                  <SheetTitle>Settings</SheetTitle>
-                  <SheetDescription className="flex flex-col gap-3">
-                    <AddBoardButton updateBoardConfig={updateBoardConfig} />
-                    <ClearDataButton />
-                  </SheetDescription>
-                </SheetHeader>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <Separator />
-          <ScrollArea>
-            <div className="flex flex-col gap-2 p-3">
-              <div>
-                <Select>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue
-                      defaultValue={"default"}
-                      placeholder={"All Boards"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent className="relative">
-                    <SelectItem value="default">All Boards</SelectItem>
-{/*                     <SelectItem value="dark">Dark</SelectItem> */}
-                    <SelectItem className="text-primary" value="system">
-                      <span className="flex w-full flex-row items-center gap-1">
-                        Manage views
-                        <ArrowTopRightIcon />
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+        <div className="fixed inset-0 bg-[url('./src/assets/yellow-ring.jpg')] bg-cover">
+          <ResizablePanelGroup
+            autoSaveId={"header-layout"}
+            direction="vertical"
+            className="bg-background/40"
+          >
+            <SiteHeader updateBoardConfig={updateBoardConfig} />
 
-              <div className="">
-                {boardConfigs &&
-                  boardConfigs?.map((board) => (
-                    <Board
-                      key={board.id}
-                      title={board.title}
-                      id={board.id}
-                      description={board.description}
-                      sortProperty={board.sortProperty}
-                      laneConfigArr={board.laneConfigArr}
-                      updateBoardConfig={updateBoardConfig}
-                    ></Board>
-                  ))}
-              </div>
-            </div>
-          </ScrollArea>
+            <ResizableHandle />
+            <ResizablePanel>
+              <ResizablePanelGroup
+                autoSaveId={"sidebar-layout"}
+                direction="horizontal"
+              >
+                <SiteSidebar
+                  updateBoardConfig={updateBoardConfig}
+                  boardConfigs={boardConfigs}
+                />
+                <ResizableHandle />
+                <SiteMain
+                  boardConfigs={boardConfigs}
+                  updateBoardConfig={updateBoardConfig}
+                />
+              </ResizablePanelGroup>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </CardsProvider>
     </ThemeProvider>
   );
+  // return (
+  //   <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+  //     <CardsProvider>
+  //       <div className="bg-background-secondary fixed inset-0 flex flex-col">
+  //         {/* <AbstractColor /> */}
+
+  //         <div className="flex flex-row items-center justify-between p-3">
+  //           <div className="z-50">
+  //             <CardTitle className="ubuntu-medium text-3xl text-primary">
+  //               Local Kanban
+  //             </CardTitle>
+  //             <CardDescription>
+  //               Smooth and easy task management that works completely offline
+  //             </CardDescription>
+  //           </div>
+  //           <div className="z-1">
+  //             {/* <img
+  //                 className="fixed inset-0"
+  //                 src="./src/assets/magenta-ripple.jpg"
+  //                 alt=""
+  //               /> */}
+  //           </div>
+  //         </div>
+  //         <Separator />
+  //         <ScrollArea>
+  //           <div className="flex flex-col gap-2 p-3">
+  //             <div>
+  //               <Select>
+  //                 <SelectTrigger className="w-[180px]">
+  //                   <SelectValue
+  //                     defaultValue={"default"}
+  //                     placeholder={"All Boards"}
+  //                   />
+  //                 </SelectTrigger>
+  //                 <SelectContent className="relative">
+  //                   <SelectItem value="default">All Boards</SelectItem>
+  //                   {/*                     <SelectItem value="dark">Dark</SelectItem> */}
+  //                   <SelectItem className="text-primary" value="system">
+  //                     <span className="flex w-full flex-row items-center gap-1">
+  //                       Manage views
+  //                       <ArrowTopRightIcon />
+  //                     </span>
+  //                   </SelectItem>
+  //                 </SelectContent>
+  //               </Select>
+  //             </div>
+
+  //             <div className="">
+  //               {boardConfigs &&
+  //                 boardConfigs?.map((board) => (
+  //                   <Board
+  //                     key={board.id}
+  //                     title={board.title}
+  //                     id={board.id}
+  //                     description={board.description}
+  //                     sortProperty={board.sortProperty}
+  //                     laneConfigArr={board.laneConfigArr}
+  //                     updateBoardConfig={updateBoardConfig}
+  //                   ></Board>
+  //                 ))}
+  //             </div>
+  //           </div>
+  //         </ScrollArea>
+  //       </div>
+  //     </CardsProvider>
+  //   </ThemeProvider>
+  // );
 }
 
 export default App;
 
-export const AddBoardButton = ({updateBoardConfig}: {updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void}) => {
+export const SiteHeader = ({
+  updateBoardConfig,
+}: {
+  updateBoardConfig: any;
+}) => {
+  return (
+    <ResizablePanel
+      className="relative bg-background/90"
+      collapsible={true}
+      collapsedSize={1}
+      minSize={9}
+      defaultSize={9}
+      onInput={(e) => console.log("what is this: ", e)}
+    >
+      <div className="absolute inset-0 flex flex-row items-start justify-between p-5">
+        <div>
+          <CardTitle className="ubuntu-medium peer text-3xl text-primary hover:underline hover:underline-offset-2">
+            <a href="#">Local Kanban</a>
+          </CardTitle>
+          <CardDescription>
+            Smooth and easy task management that works completely offline
+          </CardDescription>
+        </div>
+        <div className="flex flex-row items-center gap-3 pt-1">
+          <Button variant={"default"}>Dashboard</Button>
+          <Button variant={"ghost"}>About me</Button>
+          <Button variant={"ghost"}>Source Code</Button>
+        </div>
+        <Sheet>
+          <SheetTrigger
+            className={`group stroke-primary p-3 ${buttonVariants({ variant: "ghost" })}`}
+          >
+            <GearIcon
+              className="group-hover:animate-spin"
+              width={20}
+              height={20}
+            />
+          </SheetTrigger>
+          <SheetContent side={"left"}>
+            <SheetHeader>
+              <SheetTitle>Settings</SheetTitle>
+              <SheetDescription className="flex flex-col gap-3">
+                <AddBoardButton updateBoardConfig={updateBoardConfig} />
+                <ClearDataButton />
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </ResizablePanel>
+  );
+};
+
+export const SiteSidebar = ({
+  updateBoardConfig,
+  boardConfigs,
+}: {
+  updateBoardConfig: any;
+  boardConfigs: any;
+}) => {
+  return (
+    <ResizablePanel className="relative bg-background/90">
+      <div className="absolute inset-0 flex flex-col items-start gap-5 p-5">
+        <CardTitle>Boards</CardTitle>
+        <CardDescription>View and manage your boards</CardDescription>
+        <AddBoardButton updateBoardConfig={updateBoardConfig} />
+        <Button variant={"outline"} className="w-full text-primary">
+          All boards
+        </Button>
+        {boardConfigs ? (
+          boardConfigs.map((b: any) => (
+            <Button variant={"outline"} className="w-full">
+              {b.title}
+            </Button>
+          ))
+        ) : (
+          <span className="text-primary-foreground/50">
+            No boards yet... what are you waiting for?
+          </span>
+        )}
+      </div>
+    </ResizablePanel>
+  );
+};
+
+export const AddBoardButton = ({
+  updateBoardConfig,
+}: {
+  updateBoardConfig: (id: string, newConfig: BoardProps) => BoardProps[] | void;
+}) => {
   //
   const [newBoardConfig, setNewBoardConfig] = useState<string>("");
 
   const updateNewBoardConfig = () => {
     try {
       const json = JSON.parse(newBoardConfig);
-      updateBoardConfig(json.id, json)
+      updateBoardConfig(json.id, json);
     } catch (e) {
-      console.log('not valid JSON', e)
+      console.log("not valid JSON", e);
     }
-  }
+  };
 
   return (
     <AlertDialog>
-    <AlertDialogTrigger className={buttonVariants({variant: 'ghost'})}>
+      <AlertDialogTrigger
+        className={buttonVariants({ variant: "default" }) + " w-full"}
+      >
         Add board
       </AlertDialogTrigger>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Add new board</AlertDialogTitle>
-        <AlertDialogDescription>
-          Add a new board. Right now it has to be JSON in the following format:
-          <pre><code>
-            {JSON.stringify({
-              id: "unxoks-board",
-              title: "Unxoks Saved Tasks",
-              description: "a short description",
-              text: "bleep bloop bloop",
-              sortProperty: "status",
-              laneConfigArr: [
-                {
-                  title: "TO DO",
-                  id: "to-do",
-                  bg: "red",
-                },
-                {
-                  title: "IN PROGRESS",
-                  id: "in-progress",
-                  bg: "blue",
-                },
-                {
-                  title: "COMPLETED",
-                  id: "completed",
-                  bg: "green",
-                },
-              ],
-            }, undefined, 2)}
-          </code></pre>
-          <Textarea value={newBoardConfig} onChange={e => setNewBoardConfig(e.currentTarget.value)}></Textarea>
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction onClick={() => updateNewBoardConfig()}>Create</AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Add new board</AlertDialogTitle>
+          <AlertDialogDescription>
+            Add a new board. Right now it has to be JSON in the following
+            format:
+            <pre>
+              <code>
+                {JSON.stringify(
+                  {
+                    id: "unxoks-board",
+                    title: "Unxoks Saved Tasks",
+                    description: "a short description",
+                    text: "bleep bloop bloop",
+                    sortProperty: "status",
+                    laneConfigArr: [
+                      {
+                        title: "TO DO",
+                        id: "to-do",
+                        bg: "red",
+                      },
+                      {
+                        title: "IN PROGRESS",
+                        id: "in-progress",
+                        bg: "blue",
+                      },
+                      {
+                        title: "COMPLETED",
+                        id: "completed",
+                        bg: "green",
+                      },
+                    ],
+                  },
+                  undefined,
+                  2,
+                )}
+              </code>
+            </pre>
+            <Textarea
+              value={newBoardConfig}
+              onChange={(e) => setNewBoardConfig(e.currentTarget.value)}
+            ></Textarea>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => updateNewBoardConfig()}>
+            Create
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
-  )
-}
+const SiteMain = ({
+  boardConfigs,
+  updateBoardConfig,
+}: {
+  boardConfigs: any;
+  updateBoardConfig: any;
+}) => {
+  //
+  return (
+    <ResizablePanel className="relative bg-background/50">
+      <div className="scrollbar-thin scrollbar-thumb-primary/80 scrollbar-track-transparent absolute inset-0 flex flex-col gap-2 overflow-y-scroll p-5">
+        {boardConfigs ? (
+          boardConfigs?.map((board: any) => (
+            <Board
+              key={board.id}
+              title={board.title}
+              id={board.id}
+              description={board.description}
+              sortProperty={board.sortProperty}
+              laneConfigArr={board.laneConfigArr}
+              updateBoardConfig={updateBoardConfig}
+            ></Board>
+          ))
+        ) : (
+          <div>Select a board</div>
+        )}
+      </div>
+    </ResizablePanel>
+  );
+};
 
 export const ClearDataButton = () => {
   return (
     <AlertDialog>
-    <AlertDialogTrigger className={buttonVariants({variant: 'destructiveGhost'})}>
+      <AlertDialogTrigger
+        className={buttonVariants({ variant: "destructiveGhost" })}
+      >
         Clear all data
       </AlertDialogTrigger>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Clear All Saved Data</AlertDialogTitle>
-        <AlertDialogDescription>
-         This action cannot be undone. Are you sure?
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction onClick={() => localStorage.clear()}>Confirm</AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
-
-  )
-}
-
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Clear All Saved Data</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. Are you sure?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => localStorage.clear()}>
+            Confirm
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};

@@ -8,3 +8,4 @@ A task management kanban board with list view, CSV import/export, and Markdown s
 
 ...
 
+![demo](./src/assets//Local%20Kanban.png)

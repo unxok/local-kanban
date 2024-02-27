@@ -49,3 +49,35 @@
   font-weight: 700;
   font-style: italic;
 }
+
+.rectangle-with-corners {
+  position: relative;
+}
+
+.rectangle-with-corners::before,
+.rectangle-with-corners::after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  border-color: var(--primary); /* Use the text color for the border */
+}
+
+.rectangle-with-corners::before {
+  /* Top-left corner */
+  top: 0;
+  left: 0;
+  width: 20px; /* Adjust based on your needs */
+  height: 2px; /* Border thickness */
+  border-top-width: 2px; /* Border thickness */
+  border-left-width: 2px; /* Border thickness */
+}
+
+.rectangle-with-corners::after {
+  /* Bottom-right corner */
+  bottom: 0;
+  right: 0;
+  width: 2px; /* Border thickness */
+  height: 20px; /* Adjust based on your needs */
+  border-bottom-width: 2px; /* Border thickness */
+  border-right-width: 2px; /* Border thickness */
+}

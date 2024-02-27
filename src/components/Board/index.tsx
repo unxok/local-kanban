@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useCards, CardProps } from "../CardsProvider";
+import { useCards } from "../CardsProvider";
 import { BoardMenuButton } from "./BoardMenuButton";
 import { useEffect, useState } from "react";
 import { LayoutIcon, ListBulletIcon } from "@radix-ui/react-icons";
@@ -69,16 +69,11 @@ export type BoardProps = {
 };
 
 export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
-  const {
-    title,
-    id,
-    sortProperty,
-    laneConfigArr,
-    updateBoardConfig /*,children*/,
-  } = props;
+  const { title, id, sortProperty, updateBoardConfig /*,children*/ } = props;
   const description = props.description ? props.description : "";
   const text = props.text ? props.text : "";
-
+  const laneConfigArr = props.laneConfigArr ? props.laneConfigArr : null;
+  if (!laneConfigArr) return <div>Error: Board missing laneConfig</div>;
   const [view, setView] = useState<"board" | "table">("board");
   const { cards } = useCards();
 
