@@ -14,44 +14,44 @@ import { useEffect, useState } from "react";
 import { LayoutIcon, ListBulletIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 
-const fakeData: CardProps[] = [
-  {
-    title: "Take out trash",
-    description: "Make sure to get recycling too",
-    id: "take-out-trash",
-    tags: ["task"],
-    text: "Note: trash day on Thursday. But it's pretty big anyway",
-    properties: {
-      type: "task",
-      due: "2023/02/26",
-      status: "to-do",
-    },
-  },
-  {
-    title: "Make the bed",
-    description: "Fix the sheets, lay out blankets, etc.",
-    id: "make-the-bed",
-    tags: ["task"],
-    text: "You may want to grab the fur roller thing too just in case there's a bunch of cat hair everywhere",
-    properties: {
-      type: "task",
-      due: "2023/02/26",
-      status: "to-do",
-    },
-  },
-  {
-    title: "Clean litter box",
-    description: "Put in outisde bin!",
-    id: "clean-litter-box",
-    tags: ["task", "gross", "trash", "chore", "house"],
-    text: "I hate doing this but it must be done! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea aliquam reiciendis earum reprehenderit architecto porro, consequatur nulla consectetur deleniti aperiam fuga voluptatum quos fugiat corrupti autem alias iure voluptatibus odio? Quidem, amet porro quasi voluptatem beatae modi animi ullam ab odit inventore. Error magnam, quas laudantium labore ducimus eveniet, cupiditate repellendus quaerat ratione eaque animi autem deserunt eligendi veritatis repellat. Reprehenderit maiores, modi obcaecati assumenda reiciendis iusto dolores, odio eum veniam necessitatibus minus facere alias excepturi. Quam quidem molestiae repudiandae unde similique nobis odit aperiam magnam, delectus illo accusamus alias.",
-    properties: {
-      type: "task",
-      due: "2023/02/24",
-      status: "in-progress",
-    },
-  },
-];
+// const fakeData: CardProps[] = [
+//   {
+//     title: "Take out trash",
+//     description: "Make sure to get recycling too",
+//     id: "take-out-trash",
+//     tags: ["task"],
+//     text: "Note: trash day on Thursday. But it's pretty big anyway",
+//     properties: {
+//       type: "task",
+//       due: "2023/02/26",
+//       status: "to-do",
+//     },
+//   },
+//   {
+//     title: "Make the bed",
+//     description: "Fix the sheets, lay out blankets, etc.",
+//     id: "make-the-bed",
+//     tags: ["task"],
+//     text: "You may want to grab the fur roller thing too just in case there's a bunch of cat hair everywhere",
+//     properties: {
+//       type: "task",
+//       due: "2023/02/26",
+//       status: "to-do",
+//     },
+//   },
+//   {
+//     title: "Clean litter box",
+//     description: "Put in outisde bin!",
+//     id: "clean-litter-box",
+//     tags: ["task", "gross", "trash", "chore", "house"],
+//     text: "I hate doing this but it must be done! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea aliquam reiciendis earum reprehenderit architecto porro, consequatur nulla consectetur deleniti aperiam fuga voluptatum quos fugiat corrupti autem alias iure voluptatibus odio? Quidem, amet porro quasi voluptatem beatae modi animi ullam ab odit inventore. Error magnam, quas laudantium labore ducimus eveniet, cupiditate repellendus quaerat ratione eaque animi autem deserunt eligendi veritatis repellat. Reprehenderit maiores, modi obcaecati assumenda reiciendis iusto dolores, odio eum veniam necessitatibus minus facere alias excepturi. Quam quidem molestiae repudiandae unde similique nobis odit aperiam magnam, delectus illo accusamus alias.",
+//     properties: {
+//       type: "task",
+//       due: "2023/02/24",
+//       status: "in-progress",
+//     },
+//   },
+// ];
 
 export type LaneConfig = {
   title: string;
@@ -68,20 +68,20 @@ export type BoardProps = {
   laneConfigArr: LaneConfig[];
 };
 
-export const Board = (props: BoardProps & {updateBoardConfig: any}) => {
-  const { title, id, sortProperty, laneConfigArr, updateBoardConfig /*,children*/ } = props;
+export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
+  const {
+    title,
+    id,
+    sortProperty,
+    laneConfigArr,
+    updateBoardConfig /*,children*/,
+  } = props;
   const description = props.description ? props.description : "";
   const text = props.text ? props.text : "";
 
   const [view, setView] = useState<"board" | "table">("board");
   const { cards } = useCards();
 
-  useEffect(() => {
-    const localCards = localStorage.getItem('cards');;
-    if (!localCards) {
-      localStorage.setItem('cards', fakeData);
-    }
-  }, [])
   useEffect(() => console.log("cards changed: ", cards), [cards]);
 
   return (

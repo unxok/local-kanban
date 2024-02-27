@@ -95,14 +95,17 @@ export const NewCardButton = ({
   children: any;
   defaultCardData?: CardProps;
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <AlertDialog>
+    <AlertDialog open={isOpen} onOpenChange={(b) => setIsOpen(b)}>
       <AlertDialogTrigger className="w-3/4">{children}</AlertDialogTrigger>
       <NewCardModal
         laneId={laneId}
         laneTitle={laneTitle}
         sortProperty={sortProperty}
         defaultCardData={defaultCardData}
+        setIsOpen={setIsOpen}
       />
     </AlertDialog>
   );
@@ -117,11 +120,13 @@ const NewCardModal = ({
   laneId,
   sortProperty,
   defaultCardData,
+  setIsOpen,
 }: {
   laneTitle: string;
   laneId: string;
   sortProperty: string;
   defaultCardData?: CardProps;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [newCardData, setNewCardData] = useState<CardProps>(
     defaultCardData || {
@@ -207,11 +212,14 @@ const NewCardModal = ({
           )}
         </div>
         <div className="flex w-full flex-row justify-end gap-3">
-          <AlertDialogCancel onClick={() => console.log("cancelled")}>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => setCardById(newCardData.id, newCardData)}
+            onClick={() => {
+              setCardById(newCardData.id, newCardData);
+              setIsOpen(false);
+            }}
           >
             {defaultCardData ? "Update" : "Create"}
           </AlertDialogAction>
@@ -336,7 +344,7 @@ const TagsInput = ({
         <CardTitle className="ubuntu-regular text-xl tracking-wide">
           Tags
         </CardTitle>
-        <AllTagsSearch addTag={addTag} unusedTags={unusedTags}></AllTagsSearch>
+        <AllTagsSearch addTag={addTag} unusedTags={unusedTags} />
       </CardHeader>
       <CardContent>
         <SelectedTags
@@ -364,6 +372,7 @@ const AllTagsSearch = ({
   addTag: (tag: string) => void;
 }) => {
   const [searchTag, setSearchTag] = useState("");
+  console.log("unused", unusedTags);
   return (
     <span className="flex flex-row items-center gap-1 pt-2">
       <Popover>
@@ -385,6 +394,7 @@ const AllTagsSearch = ({
             {/* <ScrollArea> */}
             <CommandGroup>
               {unusedTags &&
+                !!unusedTags[0] &&
                 unusedTags.map((t) => (
                   <CommandItem
                     value={t}
@@ -431,12 +441,11 @@ const SelectedTags = ({
             newTags.map((t) => (
               <Badge
                 key={t}
-                onClick={(e) =>
-                  e &&
-                  e.currentTarget &&
-                  e.currentTarget.textContent &&
-                  removeTag(e.currentTarget.textContent)
-                }
+                onClick={(e) => {
+                  if (!e) return;
+                  if (!e.currentTarget) return;
+                  removeTag(e.currentTarget.textContent || "");
+                }}
               >
                 {t}
               </Badge>

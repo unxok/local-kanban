@@ -56,12 +56,12 @@ export const CardsProvider = ({
     isToDelete?: boolean,
   ) => {
     if (!cards && !isToDelete) {
-      setCards([cardData])
+      setCards([cardData]);
       localStorage.setItem("cards", JSON.stringify(cardData));
-    };
+    }
     if (!cards && isToDelete) {
       return;
-    };
+    }
     if (isToDelete) {
       // @ts-ignore TODO typescript dumb?
       const filteredCards = cards.filter((c) => c.id !== cardId);
@@ -83,7 +83,7 @@ export const CardsProvider = ({
     setCards(copyCards);
     localStorage.setItem("cards", JSON.stringify(copyCards));
   };
-  
+
   const potentialCardTagsArr = !cards
     ? null
     : cards
@@ -125,7 +125,7 @@ export const CardsProvider = ({
   // console.log("values: ", cardValues);
 
   // @ts-ignore TODO
-  const getValuesForField = (field) => cardValues[field];
+  const getValuesForField = (field) => (cardValues ? cardValues[field] : null);
   const getCardsByPropValue = (propertyName: string, propertyValue: string) => {
     return cards?.filter(
       (c) => c.properties && c.properties[propertyName] === propertyValue,
