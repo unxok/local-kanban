@@ -162,7 +162,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <CardsProvider>
-        <div className="fixed inset-0 bg-[url('/abstract-1.jpg')] bg-cover">
+        <div className="fixed inset-0 bg-[url('/abstract-1.svg')] bg-cover">
           <ResizablePanelGroup
             autoSaveId={"header-layout"}
             direction="vertical"
