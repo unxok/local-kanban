@@ -307,7 +307,7 @@ export const SiteHeader = ({
               <SheetDescription className="flex flex-col gap-3">
                 <AddBoardButton updateBoardConfig={updateBoardConfig} />
                 <Button className="w-full" onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify(localStorage);
+                  navigator.clipboard.writeText(JSON.stringify(localStorage));
                   window.alert('Data copied to clipboard');
                 }}>
                   Copy all data
