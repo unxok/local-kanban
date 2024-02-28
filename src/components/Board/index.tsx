@@ -152,6 +152,7 @@ export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
                     id={l.id}
                     bg={l.bg}
                     sortProperty={sortProperty}
+                    updateBoardConfig={updateBoardConfig}
                   />
                 ))}
               </>
