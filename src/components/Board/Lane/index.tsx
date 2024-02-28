@@ -9,7 +9,9 @@ export const Lane = ({
   id,
   bg,
   sortProperty,
-}: LaneConfig & { sortProperty: string }) => {
+  updateBoardConfig,
+  boardConfig
+}: LaneConfig & { updateBoardConfig: string; boardConfig: any }) => {
   const { cards } = useCards();
   const filteredCardsLength = cards?.filter(
     // @ts-ignore TO DO
@@ -19,7 +21,7 @@ export const Lane = ({
     <div className="flex w-0 flex-1 flex-col">
       <LaneHeader title={title} bg={bg} len={filteredCardsLength || 0} />
       <LaneBody title={title} id={id} bg={bg} sortProperty={sortProperty} />
-      <LaneFooter laneTitle={title} laneId={id} sortProperty={sortProperty} />
+      <LaneFooter laneTitle={title} laneId={id} sortProperty={sortProperty} updateBoardConfig={updateBoardConfig} boardConfig={boardConfig} />
       {/* instead of gap, place indicator component here */}
     </div>
   );
