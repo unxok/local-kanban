@@ -316,12 +316,12 @@ export const SiteHeader = ({
                   const data: any = await window.prompt('Warning: All current data will be deleted by doing this');
                   const parsed: any = JSON.parse(data);
                   localStorage.clear();
-                  Object.keys(data).forEach((k) => {
+                  Object.keys(parsed).forEach((k) => {
                     // @ts-ignore TODO
-                    localStorage.setItem(k, data[k]);
+                    localStorage.setItem(k, parsed[k]);
                   });
                   window.location.reload()
-                }>
+                }}>
                   Import all data (clears current)
                   </Button>
                 <ClearDataButton />
