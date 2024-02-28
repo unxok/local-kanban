@@ -48,7 +48,7 @@ import {
   CommandInput,
   CommandItem,
 } from "./components/ui/command";
-import { UpdateNewCardDataFn } from "./components/Board/Lane/LaneFooter";
+// import { UpdateNewCardDataFn } from "./components/Board/Lane/LaneFooter";
 import { Badge } from "./components/ui/badge";
 import {
   Table,
@@ -767,10 +767,10 @@ const PropertySelect = ({
   defaultVal,
   updateNewBoardConfig,
 }: {
-  defaultVal?: { [key: string]: any } | null;
+  defaultVal?: string;
   updateNewBoardConfig: UpdateNewBoardConfig;
 }) => {
-  const [searchField, setSearchField] = useState("");
+  const [searchField, setSearchField] = useState(defaultVal || "");
   const { cardFields } = useCards();
   const updateSearchField = (field: string) => {
     setSearchField(field);
