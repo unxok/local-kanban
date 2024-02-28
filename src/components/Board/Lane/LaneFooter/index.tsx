@@ -90,7 +90,7 @@ export const LaneFooter = ({
 
 export const DeleteLaneButton = ({laneConfig, boardConfig, updateBoardConfig, children}: any) => {
   const handleDelete = () => {
-    const newConfigArr = boardConfig.laneConfigArr.filter(i: any => i.id === laneConfig.id);
+    const newConfigArr = boardConfig.laneConfigArr.filter((i: any) => i.id === laneConfig.id);
     const newBoardConfig = {...boardConfig, laneConfigArr: newConfigArr};
     updateBoardConfig(boardConfig.id, newBoardConfig);
   }
