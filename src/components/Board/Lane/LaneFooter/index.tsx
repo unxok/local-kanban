@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -89,7 +89,7 @@ export const LaneFooter = ({
 
 export const DeleteLaneButton = ({laneId, boardConfig, updateBoardConfig, children}: {laneId: any; boardConfig: any; updateBoardConfig: any; children: any}) => {
   const handleDelete = () => {
-    const newConfigArr: any[] = boardConfig.laneConfigArr.filter((board) => (board.id !== laneId));
+    const newConfigArr: any[] = boardConfig.laneConfigArr.filter((board: any) => (board.id !== laneId));
     const newBoardConfig = {...boardConfig, laneConfigArr: newConfigArr};
     updateBoardConfig(boardConfig.id, newBoardConfig);
   }
@@ -98,7 +98,7 @@ export const DeleteLaneButton = ({laneId, boardConfig, updateBoardConfig, childr
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Deleting the<span className="text-primary">&nbsp;{laneConfig.title}&nbsp;</span>lane</AlertDialogTitle>
+          <AlertDialogTitle>Deleting the<span className="text-primary">&nbsp;{laneId}&nbsp;</span>lane</AlertDialogTitle>
           <AlertDialogDescription>This will permanently delete this lane. This will not delete the cards though!</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
