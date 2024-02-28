@@ -81,17 +81,17 @@ export const LaneFooter = ({
       </div>
     </NewCardButton>
     <Button className="w-1/4" variant={"outline"}>
-      <DeleteLaneButton updateBoardConfig={updateBoardConfig} boardConfig={boardConfig}>
+      <DeleteLaneButton updateBoardConfig={updateBoardConfig} boardConfig={boardConfig} laneId={laneId}>
       <DotsVerticalIcon />
         </DeleteLaneButton>
     </Button>
   </div>
 );
 
-export const DeleteLaneButton = ({laneConfig, boardConfig, updateBoardConfig, children}: {laneConfig: any; boardConfig: any; updateBoardConfig: any; children: any}) => {
+export const DeleteLaneButton = ({laneId, boardConfig, updateBoardConfig, children}: {laneId: any; boardConfig: any; updateBoardConfig: any; children: any}) => {
   const handleDelete = () => {
     // window.alert('delete')
-    const newConfigArr: any[] = boardConfig.laneConfigArr.filter((board) => (board.id !== laneConfig.id));
+    const newConfigArr: any[] = boardConfig.laneConfigArr.filter((board) => (board.id !== laneId));
     const newBoardConfig = {...boardConfig, laneConfigArr: newConfigArr};
     updateBoardConfig(boardConfig.id, newBoardConfig);
   }
