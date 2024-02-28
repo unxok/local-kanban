@@ -1,8 +1,7 @@
 name: Build and add to gh-pages branch
 
-on: 
-  push:
-    branches: 'main'
+on: workflow_dispatch
+
 
 
 jobs:
@@ -16,7 +15,7 @@ jobs:
     - name: Configure Git
       run: |
         git config --global user.email "me@unxok.com"
-        git config --global user.name "bot@unxok"
+        git config --global user.name "local-kanban[bot]"
 
 
     - name: Build
