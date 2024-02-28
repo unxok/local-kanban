@@ -167,107 +167,107 @@ export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
   );
 };
 
-const AddLaneButton = ({
-  children,
-  updateBoardConfig,
-}: {
-  children: any;
-  updateBoardConfig: any;
-}) => {
-  const defaultLaneConfig = {
-    id: "in-progress",
-    title: "IN PROGRESS",
-    bg: "blue",
-  };
-  const [newLane, setNewLane] = useState(defaultLaneConfig);
+// const AddLaneButton = ({
+//   children,
+//   updateBoardConfig,
+// }: {
+//   children: any;
+//   updateBoardConfig: any;
+// }) => {
+//   const defaultLaneConfig = {
+//     id: "in-progress",
+//     title: "IN PROGRESS",
+//     bg: "blue",
+//   };
+//   const [newLane, setNewLane] = useState(defaultLaneConfig);
 
-  const updateNewLane = (id: string, value: string) => {
-    setNewLane((prev) => {
-      return {
-        ...prev,
-        [id]: value,
-      };
-    });
-  };
+//   const updateNewLane = (id: string, value: string) => {
+//     setNewLane((prev) => {
+//       return {
+//         ...prev,
+//         [id]: value,
+//       };
+//     });
+//   };
 
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger>{children}</AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Adding a new lane</AlertDialogTitle>
-          <AlertDialogDescription>
-            Add a new lane with the following settings.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className="flex w-full flex-col gap-3 py-2">
-          <div className="flex flex-row items-center justify-between">
-            <Label htmlFor="title">Title</Label>
-            <div className="text-secondary-foreground">
-              This is what will display above the lane. All capital letters is
-              recommended
-            </div>
-            <Input
-              id="title"
-              onInput={(e) =>
-                updateNewLane(e.currentTarget.id, e.currentTarget.value)
-              }
-              className="w-3/4"
-            />
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <Label htmlFor="description">Description</Label>
-            <div className="text-secondary-foreground">
-              This is the value corresponding to this lane for the configured
-              sort property
-            </div>
-            <Input
-              id="id"
-              onInput={(e) =>
-                updateNewLane(e.currentTarget.id, e.currentTarget.value)
-              }
-              className="w-3/4"
-            />
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <Label htmlFor="bg">Background color</Label>
-            <Select
-              onValueChange={(e) => updateNewLane("bg", e)}
-              defaultValue="red"
-            >
-              <SelectTrigger id="bg" className="w-3/4">
-                <SelectValue placeholder="green" />
-              </SelectTrigger>
-              <SelectContent>
-                {[
-                  "red",
-                  "orange",
-                  "yellow",
-                  "green",
-                  "purple",
-                  "pink",
-                  "blue",
-                ].map((c) => (
-                  <SelectItem value={c} key={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-                <SelectItem value="red">Light</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setNewLane(defaultLaneConfig)}>
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => updateBoardConfig(newLane.id, newLane)}
-          >
-            Continue
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};
+//   return (
+//     <AlertDialog>
+//       <AlertDialogTrigger>{children}</AlertDialogTrigger>
+//       <AlertDialogContent>
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>Adding a new lane</AlertDialogTitle>
+//           <AlertDialogDescription>
+//             Add a new lane with the following settings.
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <div className="flex w-full flex-col gap-3 py-2">
+//           <div className="flex flex-row items-center justify-between">
+//             <Label htmlFor="title">Title</Label>
+//             <div className="text-secondary-foreground">
+//               This is what will display above the lane. All capital letters is
+//               recommended
+//             </div>
+//             <Input
+//               id="title"
+//               onInput={(e) =>
+//                 updateNewLane(e.currentTarget.id, e.currentTarget.value)
+//               }
+//               className="w-3/4"
+//             />
+//           </div>
+//           <div className="flex flex-row items-center justify-between">
+//             <Label htmlFor="description">Description</Label>
+//             <div className="text-secondary-foreground">
+//               This is the value corresponding to this lane for the configured
+//               sort property
+//             </div>
+//             <Input
+//               id="id"
+//               onInput={(e) =>
+//                 updateNewLane(e.currentTarget.id, e.currentTarget.value)
+//               }
+//               className="w-3/4"
+//             />
+//           </div>
+//           <div className="flex flex-row items-center justify-between">
+//             <Label htmlFor="bg">Background color</Label>
+//             <Select
+//               onValueChange={(e) => updateNewLane("bg", e)}
+//               defaultValue="red"
+//             >
+//               <SelectTrigger id="bg" className="w-3/4">
+//                 <SelectValue placeholder="green" />
+//               </SelectTrigger>
+//               <SelectContent>
+//                 {[
+//                   "red",
+//                   "orange",
+//                   "yellow",
+//                   "green",
+//                   "purple",
+//                   "pink",
+//                   "blue",
+//                 ].map((c) => (
+//                   <SelectItem value={c} key={c}>
+//                     {c}
+//                   </SelectItem>
+//                 ))}
+//                 <SelectItem value="red">Light</SelectItem>
+//               </SelectContent>
+//             </Select>
+//           </div>
+//         </div>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel onClick={() => setNewLane(defaultLaneConfig)}>
+//             Cancel
+//           </AlertDialogCancel>
+//           <AlertDialogAction
+//             onClick={() => updateBoardConfig(newLane.id, newLane)}
+//           >
+//             Continue
+//           </AlertDialogAction>
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// };
