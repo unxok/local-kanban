@@ -80,8 +80,8 @@ export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
   useEffect(() => console.log("cards changed: ", cards), [cards]);
 
   return (
-    <div className="bg-background-primary flex flex-col items-center justify-start gap-10 rounded-3xl p-10">
-      <Card className="w-full">
+    <div className="flex flex-col items-center justify-start gap-10 rounded-3xl p-10">
+      <Card className="w-full bg-background/70 backdrop-blur-lg">
         <CardHeader className="flex flex-row justify-between">
           <div>
             <CardTitle className="ubuntu flex flex-row gap-2">

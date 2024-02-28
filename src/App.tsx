@@ -268,12 +268,12 @@ export const SiteHeader = ({
 }: {
   updateBoardConfig: any;
 }) => {
-  console.log(updateBoardConfig)
+  console.log(updateBoardConfig);
   return (
     <ResizablePanel
-      className="relative bg-background/90"
+      className="relative bg-background/70 backdrop-blur-md"
       collapsible={true}
-      collapsedSize={1}
+      collapsedSize={0}
       minSize={9}
       defaultSize={9}
       onInput={(e) => console.log("what is this: ", e)}
@@ -306,25 +306,35 @@ export const SiteHeader = ({
             <SheetHeader>
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="flex flex-col gap-3">
-{/*                 <AddBoardButton updateBoardConfig={updateBoardConfig} /> */}
-                <Button variant="ghost" className="w-full" onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify(localStorage));
-                  window.alert('Data copied to clipboard');
-                }}>
+                {/*                 <AddBoardButton updateBoardConfig={updateBoardConfig} /> */}
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(localStorage));
+                    window.alert("Data copied to clipboard");
+                  }}
+                >
                   Copy all data
-                  </Button>
-                <Button variant="ghost" className="w-full" onClick={async () => {
-                  const data: any = await window.prompt('Warning: All current data will be deleted by doing this');
-                  const parsed: any = JSON.parse(data);
-                  localStorage.clear();
-                  Object.keys(parsed).forEach((k) => {
-                    // @ts-ignore TODO
-                    localStorage.setItem(k, parsed[k]);
-                  });
-                  window.location.reload()
-                }}>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={async () => {
+                    const data: any = await window.prompt(
+                      "Warning: All current data will be deleted by doing this",
+                    );
+                    const parsed: any = JSON.parse(data);
+                    localStorage.clear();
+                    Object.keys(parsed).forEach((k) => {
+                      // @ts-ignore TODO
+                      localStorage.setItem(k, parsed[k]);
+                    });
+                    window.location.reload();
+                  }}
+                >
                   Import all data (clears current)
-                  </Button>
+                </Button>
                 <ClearDataButton />
               </SheetDescription>
             </SheetHeader>
@@ -343,17 +353,24 @@ export const SiteSidebar = ({
   boardConfigs: any;
 }) => {
   return (
-    <ResizablePanel className="relative bg-background/90">
+    <ResizablePanel
+      collapsible={true}
+      collapsedSize={0}
+      minSize={9}
+      defaultSize={9}
+      className="relative bg-background/70 backdrop-blur-md"
+    >
       <div className="absolute inset-0 flex flex-col items-start gap-5 p-5">
         <CardTitle>Boards</CardTitle>
         <CardDescription>View and manage your boards</CardDescription>
+        <Button className="w-full">Add board</Button>
         <AddBoardButton updateBoardConfig={updateBoardConfig} />
         <Button variant={"outline"} className="w-full text-primary">
           All boards
         </Button>
         {boardConfigs ? (
           boardConfigs.map((b: any) => (
-            <Button variant={"outline"} className="w-full">
+            <Button key={b.id} variant={"outline"} className="w-full">
               {b.title}
             </Button>
           ))
@@ -386,10 +403,8 @@ export const AddBoardButton = ({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger
-        className={buttonVariants({ variant: "default" }) + " w-full"}
-      >
-        Add board
+      <AlertDialogTrigger asChild>
+        <Button className="w-full">Add board</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -446,7 +461,6 @@ export const AddBoardButton = ({
   );
 };
 
-
 const SiteMain = ({
   boardConfigs,
   updateBoardConfig,
@@ -457,7 +471,7 @@ const SiteMain = ({
   //
   return (
     <ResizablePanel className="relative bg-background/50">
-      <div className="scrollbar-thin scrollbar-thumb-primary/80 scrollbar-track-transparent absolute inset-0 flex flex-col gap-2 overflow-y-scroll p-5">
+      <div className="absolute inset-0 flex flex-col gap-2 overflow-y-scroll p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/80">
         {boardConfigs ? (
           boardConfigs?.map((board: any) => (
             <Board
@@ -495,10 +509,12 @@ export const ClearDataButton = () => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => {
-            localStorage.clear()
-            window.location.reload()
-          }}>
+          <AlertDialogAction
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
             Confirm
           </AlertDialogAction>
         </AlertDialogFooter>

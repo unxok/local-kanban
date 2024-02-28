@@ -21,7 +21,6 @@ const buttonVariants = cva(
         destructiveGhost:
           "hover:bg-destructive bg-transparent hover:text-accent-foreground text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        primaryGlasssy: "",
       },
       size: {
         default: "h-9 px-4 py-2",
