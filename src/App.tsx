@@ -497,7 +497,7 @@ export const ClearDataButton = () => {
           <AlertDialogAction onClick={() => {
             localStorage.clear()
             window.location.reload()
-          }>
+          }}>
             Confirm
           </AlertDialogAction>
         </AlertDialogFooter>
