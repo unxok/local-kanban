@@ -96,6 +96,9 @@ export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
   if (!laneConfigArr) return <div>Error: Board missing laneConfig</div>;
   const [view, setView] = useState<"board" | "table">("board");
   const { cards } = useCards();
+  const copyProps = {...props};
+  delete copyProps.updateBoardConfig;
+  
 
   useEffect(() => console.log("cards changed: ", cards), [cards]);
 
@@ -153,7 +156,7 @@ export const Board = (props: BoardProps & { updateBoardConfig: any }) => {
                     bg={l.bg}
                     sortProperty={sortProperty}
                     updateBoardConfig={updateBoardConfig}
-                    boardConfig={{...props, updateBoardConfig: undefined}
+                    boardConfig={copyProps}
                   />
                 ))}
               </>
