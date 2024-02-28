@@ -306,6 +306,24 @@ export const SiteHeader = ({
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="flex flex-col gap-3">
                 <AddBoardButton updateBoardConfig={updateBoardConfig} />
+                <Button className="w-full" onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(localStorage);
+                  window.alert('Data copied to clipboard');
+                }}>
+                  Copy all data
+                  </Button>
+                <Button className="w-full" onClick={async () => {
+                  const data: any = await window.prompt('Warning: All current data will be deleted by doing this');
+                  const parsed: any = JSON.parse(data);
+                  localStorage.clear();
+                  Object.keys(data).forEach((k) => {
+                    // @ts-ignore TODO
+                    localStorage.setItem(k, data[k]);
+                  });
+                  window.location.reload()
+                }>
+                  Import all data (clears current)
+                  </Button>
                 <ClearDataButton />
               </SheetDescription>
             </SheetHeader>
@@ -427,6 +445,7 @@ export const AddBoardButton = ({
   );
 };
 
+
 const SiteMain = ({
   boardConfigs,
   updateBoardConfig,
@@ -475,7 +494,10 @@ export const ClearDataButton = () => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => localStorage.clear()}>
+          <AlertDialogAction onClick={() => {
+            localStorage.clear()
+            window.location.reload()
+          }>
             Confirm
           </AlertDialogAction>
         </AlertDialogFooter>
