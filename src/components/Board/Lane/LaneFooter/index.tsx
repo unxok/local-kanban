@@ -83,9 +83,7 @@ export const LaneFooter = ({
   
       <DeleteLaneButton updateBoardConfig={updateBoardConfig} boardConfig={boardConfig} laneId={laneId}>
       <DotsVerticalIcon />
-        <div className={`w-full ${buttonVariants({ variant: "outline" })}`}>
           </DeleteLaneButton>
-        </div>
   </div>
 );
 
