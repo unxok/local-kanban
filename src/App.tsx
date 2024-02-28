@@ -301,18 +301,18 @@ export const SiteHeader = ({
               height={20}
             />
           </SheetTrigger>
-          <SheetContent side={"left"}>
+          <SheetContent side={"right"}>
             <SheetHeader>
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="flex flex-col gap-3">
-                <AddBoardButton updateBoardConfig={updateBoardConfig} />
-                <Button className="w-full" onClick={() => {
+{/*                 <AddBoardButton updateBoardConfig={updateBoardConfig} /> */}
+                <Button variant="ghost" className="w-full" onClick={() => {
                   navigator.clipboard.writeText(JSON.stringify(localStorage));
                   window.alert('Data copied to clipboard');
                 }}>
                   Copy all data
                   </Button>
-                <Button className="w-full" onClick={async () => {
+                <Button variant="ghost" className="w-full" onClick={async () => {
                   const data: any = await window.prompt('Warning: All current data will be deleted by doing this');
                   const parsed: any = JSON.parse(data);
                   localStorage.clear();
