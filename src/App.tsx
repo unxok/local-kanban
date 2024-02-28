@@ -268,6 +268,7 @@ export const SiteHeader = ({
 }: {
   updateBoardConfig: any;
 }) => {
+  console.log(updateBoardConfig)
   return (
     <ResizablePanel
       className="relative bg-background/90"
