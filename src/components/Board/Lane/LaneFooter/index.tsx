@@ -104,6 +104,7 @@ export const DeleteLaneButton = ({laneConfig, boardConfig, updateBoardConfig, ch
         <AlertDialogAction>Delete</AlertDialogAction>
       </AlertDialogContent>
     </AlertDialog>
+    )
 }
 
 export const NewCardButton = ({
