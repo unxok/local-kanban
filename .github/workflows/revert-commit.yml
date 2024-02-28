@@ -21,6 +21,6 @@ jobs:
     - name: Revert
       run: |
         git checkout -b "gh-pages"
-        git git revert HEAD^
+        git revert HEAD^
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
