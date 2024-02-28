@@ -61,12 +61,14 @@ export const LaneFooter = ({
   laneTitle,
   laneId,
   sortProperty,
-  updateBoardConfig
+  updateBoardConfig,
+  boardConfig
 }: {
   laneTitle: string;
   laneId: string;
   sortProperty: string;
-  updateBoardConfig: any
+  updateBoardConfig: any;
+  boardConfig: any;
 }) => (
   <div className="flex flex-row gap-1 px-1 pt-2">
     <NewCardButton
@@ -79,7 +81,7 @@ export const LaneFooter = ({
       </div>
     </NewCardButton>
     <Button className="w-1/4" variant={"outline"}>
-      <DeleteLaneButton>
+      <DeleteLaneButton updateBoardConfig={updateBoardConfig} boardConfig={boardConfig}>
       <DotsVerticalIcon />
         </DeleteLaneButton>
     </Button>
@@ -88,7 +90,7 @@ export const LaneFooter = ({
 
 export const DeleteLaneButton = ({laneConfig, boardConfig, updateBoardConfig, children}: any) => {
   const handleDelete = () => {
-    const newConfigArr = boardConfig.laneConfigArr.filter(i => i.id === laneConfig.id);
+    const newConfigArr = boardConfig.laneConfigArr.filter(i: any => i.id === laneConfig.id);
     const newBoardConfig = {...boardConfig, laneConfigArr: newConfigArr};
     updateBoardConfig(boardConfig.id, newBoardConfig);
   }
@@ -100,8 +102,8 @@ export const DeleteLaneButton = ({laneConfig, boardConfig, updateBoardConfig, ch
           <AlertDialogTitle>Deleting the<span className="text-primary">&nbsp;{laneConfig.title}&nbsp;</span>lane</AlertDialogTitle>
           <AlertDialogDescription>This will permanently delete this lane. This will not delete the cards though!</AlertDialogDescription>
         </AlertDialogHeader>
-        <ALertDialogCancel>Cancel</ALertDialogCancel>
-        <AlertDialogAction>Delete</AlertDialogAction>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction onClick={() => handleDelete()}>Delete</AlertDialogAction>
       </AlertDialogContent>
     </AlertDialog>
     )
