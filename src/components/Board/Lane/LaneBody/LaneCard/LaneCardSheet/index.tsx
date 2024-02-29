@@ -62,7 +62,7 @@ export const LaneCardSheet = (
           </div>
           <div className="flex flex-col gap-3 py-5">
             <SheetTitle>Notes</SheetTitle>
-            <div>{text}</div>
+            <div className="whitespace-pre-line">{text}</div>
           </div>
         </ScrollArea>
 
