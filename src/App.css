@@ -1,16 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Kanit&family=Open+Sans&family=Oswald:wght@600&family=Roboto:wght@400;500&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Kanit&family=Open+Sans&family=Oswald:wght@600&family=Roboto:wght@400;500&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
-.ubuntu-light {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.ubuntu-light-italic {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
+@import url("https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap");
 
 .ubuntu-regular {
   font-family: "Ubuntu", sans-serif;
@@ -18,91 +8,8 @@
   font-style: normal;
 }
 
-.ubuntu-regular-italic {
-  font-family: "Ubuntu", sans-serif;
+.allerta-stencil-regular {
+  font-family: "Allerta Stencil", sans-serif;
   font-weight: 400;
-  font-style: italic;
-}
-
-.ubuntu-medium {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 500;
   font-style: normal;
-}
-
-.ubuntu-medium-italic {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 500;
-  font-style: italic;
-}
-
-.ubuntu-bold {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.ubuntu-bold-italic {
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-.rectangle-with-corners {
-  position: relative;
-}
-
-/* .outset-border {
-  box-shadow: [horizontal offset] [vertical offset] [blur radius] [spread radius] [color] [inset];
-  border-top: 1px solid;
-  border-image: linear-gradient(
-      to right,
-      #ffffff 0%,
-      rgba(255, 255, 255, 50%) 20%,
-      transparent 40%
-    )
-    100% 1;
 } */
-
-/* .outset-border {
-  border-top: 1px solid black;
-  position: relative;
-}
-.outset-border:after {
-  padding: 0;
-  margin: 0;
-  display: block;
-  content: "";
-  width: 40%;
-  height: 1.1px;
-  background-image: linear-gradient(
-    to right,
-    white 0%,
-    rgba(255, 255, 255, 50%) 50%,
-    transparent 100%
-  );
-  position: absolute;
-  left: 10px;
-  top: -1px;
-}
-
-.outset-border:before {
-  padding: 0;
-  margin: 0;
-  display: block;
-  content: "";
-  height: 40%;
-  width: 1.1px;
-  background-image: linear-gradient(
-    to bottom,
-    white 0%,
-    rgba(255, 255, 255, 50%) 50%,
-    transparent 100%
-  );
-  position: absolute;
-  left: -1px;
-  top: 10px;
-}
-
-
- */
