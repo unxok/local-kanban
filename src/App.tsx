@@ -1,5 +1,6 @@
 import { Body } from "./components/Body";
 import { Header } from "./components/Header";
+import { SaveProvider } from "./components/SaveProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import {
   ResizablePanelGroup,
@@ -9,13 +10,15 @@ import {
 const App = () => (
   <ThemeProvider>
     {/* // TODO Add some state here to allow customizable theme */}
-    <div className=" fixed inset-0 ">
-      <ResizablePanelGroup autoSaveId={"app-layout"} direction="vertical">
-        <Header />
-        <ResizableHandle />
-        <Body />
-      </ResizablePanelGroup>
-    </div>
+    <SaveProvider>
+      <div className=" fixed inset-0 ">
+        <ResizablePanelGroup autoSaveId={"app-layout"} direction="vertical">
+          <Header />
+          <ResizableHandle />
+          <Body />
+        </ResizablePanelGroup>
+      </div>
+    </SaveProvider>
   </ThemeProvider>
 );
 

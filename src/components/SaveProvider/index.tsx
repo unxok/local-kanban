@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { BoardConfig } from "../Body/Main";
 
 type Callback<T> = (args: T) => T;
 
 const LocalStorageKeys = {
   BOARDS: "boards",
 };
+
 const getLS = (key: string) => {
   const data = localStorage.getItem(key);
   if (data) {
@@ -17,8 +19,28 @@ const getLS = (key: string) => {
   }
 };
 
-// TODO fix the any
-const SaveContext = createContext<any>(null);
+const setLS = (key: string, value: any) => {
+  try {
+    const data = JSON.stringify(value);
+    localStorage.setItem(key, data);
+    return;
+  } catch (e) {
+    console.log("Application Error-- Couldn't stringify JSON: ", e);
+    return;
+  }
+};
+
+const SaveContext = createContext<{
+  boardList: string[] | [];
+  // updateBoardList: (callback: Callback<string[]>) => void;
+  boardData: Record<string, BoardConfig>;
+  updateBoard: (data: BoardConfig, doDelete?: boolean) => void;
+}>({
+  boardList: [],
+  // updateBoardList: () => undefined,
+  boardData: {},
+  updateBoard: () => undefined,
+});
 
 const useSaveContext = () => {
   const ctx = useContext(SaveContext);
@@ -32,44 +54,64 @@ const useSaveContext = () => {
 
 // TODO fix the any
 const SaveProvider = ({ children }: { children: any }) => {
-  const [boards, setBoards] = useState<string[]>([]);
+  const [boardList, setBoardList] = useState<string[]>([]);
+  const [boardData, setBoardData] = useState<Record<string, BoardConfig>>({});
   const { BOARDS } = LocalStorageKeys;
 
   useEffect(() => {
-    setBoards(getLS(BOARDS) as string[]);
+    const bList = getLS(BOARDS) as string[];
+    if (!bList) {
+      setBoardList([]);
+      return;
+    }
+    setBoardList(bList);
+    setBoardData(() =>
+      bList.reduce(
+        (acc, val) => ({
+          ...acc,
+          [val]: getLS(val),
+        }),
+        {},
+      ),
+    );
+    // console.log("heres your boards: ", bList);
   }, []);
 
-  const updateBoards = (callback: Callback<string[]>) => {
-    const newBoards = callback(boards);
-    setBoards(newBoards);
-    // localStorage.setItem()
+  const updateBoardList = (callback: Callback<string[]>) => {
+    const newBoards = callback(boardList);
+    setBoardList(newBoards);
+    setLS(BOARDS, newBoards);
   };
 
-  const updateBoardById = (
-    id: string,
-    callback: Callback<any>,
-    doDelete?: boolean,
-  ) => {
+  const updateBoard = (data: BoardConfig, doDelete?: boolean) => {
     // find index in boards array for passed id
-    const foundBoardIndex = boards.findIndex((b) => b === id);
-    // if can't find it, just return
-    if (foundBoardIndex === -1) return;
-    // board was found so use the provided callback to get the updated contents
-    const updatedBoard = callback(boards[foundBoardIndex]);
+    const foundBoardIndex = boardList.indexOf(data.title);
+
     // if doDelete is true, set boards to the same but filter out found board index
-    if (doDelete)
-      return setBoards((prev) =>
+    if (doDelete) {
+      updateBoardList((prev) =>
         prev.filter((b) => prev.indexOf(b) !== foundBoardIndex),
       );
-    // if no delete, update the board
-    setBoards((prev) => {
-      prev[foundBoardIndex] = updatedBoard;
-      return prev;
-    });
+      setBoardData((prev) => {
+        const prevCopy = { ...prev };
+        delete prevCopy[data.title];
+        return prevCopy;
+      });
+    }
+
+    if (foundBoardIndex === -1) {
+      updateBoardList((prev) => [...prev, data.title]);
+    }
+
+    setBoardData((prev) => ({
+      ...prev,
+      [data.title]: data,
+    }));
+    setLS(data.title, data);
   };
 
   return (
-    <SaveContext.Provider value={{ boards, updateBoards, updateBoardById }}>
+    <SaveContext.Provider value={{ boardList, boardData, updateBoard }}>
       {children}
     </SaveContext.Provider>
   );
