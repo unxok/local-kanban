@@ -28,7 +28,7 @@ export const AddBoardModal = ({
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  defaultData: BoardConfig;
+  defaultData?: BoardConfig;
 }) => {
   const [errMsgArr, setErrMsgArr] = useState<string[] | null>(null);
   const { updateBoard, checkDuplicate } = useSaveContext();
@@ -87,7 +87,7 @@ export const AddBoardModal = ({
                   className="w-1/2"
                   type="text"
                   id="title"
-                  placeholder={defaultData.title || "Unnamed Board"}
+                  placeholder={defaultData?.title || "Unnamed Board"}
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }
@@ -99,7 +99,7 @@ export const AddBoardModal = ({
                   className="w-1/2"
                   type="text"
                   id="sortProperty"
-                  placeholder={defaultData.sortProperty || "status"}
+                  placeholder={defaultData?.sortProperty || "status"}
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }
@@ -111,7 +111,9 @@ export const AddBoardModal = ({
                   className="w-1/2"
                   type="text"
                   id="description"
-                  placeholder={defaultData.description || "A short sentence..."}
+                  placeholder={
+                    defaultData?.description || "A short sentence..."
+                  }
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }
@@ -123,7 +125,7 @@ export const AddBoardModal = ({
                   className="w-1/2"
                   type="text"
                   id="notes"
-                  placeholder={defaultData.notes || "Markdown supported..."}
+                  placeholder={defaultData?.notes || "Markdown supported..."}
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }

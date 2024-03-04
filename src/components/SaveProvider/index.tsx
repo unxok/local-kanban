@@ -99,7 +99,7 @@ const SaveProvider = ({ children }: { children: any }) => {
   };
 
   const deleteBoard = (id: string) => {
-    setBoardList((prev) => prev.filter((b) => b !== id));
+    setBoardList((prev) => [...prev.filter((b) => b !== id)]);
     setBoardData((prev) => {
       delete prev[id];
       return prev;
@@ -174,7 +174,7 @@ const SaveProvider = ({ children }: { children: any }) => {
     // is duplicate should return true
     if (checkType === "board") {
       const foundIndex = Object.keys(boardData).findIndex(
-        (b) => boardData[b].title === value,
+        (b) => boardData?.[b]?.title === value,
       );
       return foundIndex !== -1;
     }

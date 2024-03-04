@@ -109,6 +109,7 @@ export const Main = () => {
           {boardKeys[0] ? (
             boardKeys.map((bTitle) => {
               const b = boardData[bTitle];
+              if (!b) return;
               return <Board key={b.title} {...b} />;
             })
           ) : (

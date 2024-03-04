@@ -11,13 +11,15 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import { LaneCardSeparator } from "../LaneCardSeparator";
 import { useSaveContext } from "@/components/SaveProvider";
+import { Button } from "@/components/ui/button";
 
 export const LaneCard = (
   props: LaneCardConfig & {
     layoutId: string;
+    startCardEdit: (cardId: string) => void;
   },
 ) => {
-  const { title, layoutId } = props;
+  const { title, layoutId, startCardEdit } = props;
   const { setActiveCardId } = useSaveContext();
   const description = props.description ? props.description : undefined;
   const tags = props.tags ? props.tags : undefined;
@@ -63,9 +65,13 @@ export const LaneCard = (
         </CardHeader>
         <CardContent className="flex flex-row justify-between p-4 pt-1">
           <div>{tags ? <CardTags tags={tags} /> : <br />}</div>
-          <div className="flex flex-row items-end">
+          <Button
+            variant={"ghost"}
+            className="flex flex-row items-end"
+            onClick={() => startCardEdit(title)}
+          >
             <DotsHorizontalIcon />
-          </div>
+          </Button>
         </CardContent>
       </Card>
     </motion.div>

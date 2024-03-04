@@ -6,7 +6,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { BoardConfig, LaneConfig } from "../..";
+import { BoardConfig, LaneCardConfig, LaneConfig } from "../..";
 import { LaneCard } from "./LaneCard";
 import { Color, getBgColor, getBorderColor } from "@/utils";
 import { useSaveContext } from "@/components/SaveProvider";
@@ -27,9 +27,18 @@ export const Lane = (props: LaneConfig & { boardConfig: BoardConfig }) => {
   const bgColor = getBgColor((bg || "default") as Color);
   const borderColor = getBorderColor((bg || "default") as Color);
   const [isCardModalOpen, setCardModalOpen] = useState(false);
+  const [defaultCardEditData, setDefaultCardEditData] =
+    useState<LaneCardConfig>();
   const { activeCardId, setActiveCardId, updateBoard } = useSaveContext();
 
-  useEffect(() => console.log("active: ", activeCardId), [activeCardId]);
+  useEffect(() => {
+    if (defaultCardEditData) {
+      setCardModalOpen(true);
+      return;
+    }
+    setCardModalOpen(false);
+    return;
+  }, [defaultCardEditData]);
 
   // const setActiveAsBefore = (
   //   cardId: string,
@@ -98,6 +107,15 @@ export const Lane = (props: LaneConfig & { boardConfig: BoardConfig }) => {
     setActiveCardId(undefined);
   };
 
+  const startCardEdit = (cardId: string) => {
+    const data = filteredCards?.find((c) => c.title === cardId);
+    if (!data)
+      throw new Error(
+        "Error, trying to edit card that can't be found. You shouldn't be seeing this...",
+      );
+    setDefaultCardEditData(data);
+  };
+
   return (
     <Card
       className={`basis-full border-none bg-transparent shadow-none`}
@@ -124,6 +142,7 @@ export const Lane = (props: LaneConfig & { boardConfig: BoardConfig }) => {
               {...c}
               key={boardConfig.title + " " + title + " " + c.title}
               layoutId={boardConfig.title + " " + title + " " + c.title}
+              startCardEdit={startCardEdit}
             />
 
             // </div>
@@ -152,6 +171,7 @@ export const Lane = (props: LaneConfig & { boardConfig: BoardConfig }) => {
               open={isCardModalOpen}
               onOpenChange={setCardModalOpen}
               defaultSortValue={sortValue}
+              defaultData={defaultCardEditData}
             />
           )}
         </CardFooter>
