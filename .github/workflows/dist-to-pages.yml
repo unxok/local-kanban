@@ -26,11 +26,26 @@ jobs:
     #     git commit -m "Ran auto build"
     #     git push origin main
 
+    - name: Capture Subtree Reference
+      run: |
+        SUBTREE_REF=$(git subtree split --prefix dist rework)
+      shell: bash
+
     - name: Commit and Push dist to gh-pages
       run: |
         git checkout rework
         git add dist
         git commit -m "Initial dist subtree commit" || echo "No changes to commit"
-        git push origin rework `git subtree split --prefix dist rework`:gh-pages --force
+        git push origin rework $SUBTREE_REF:gh-pages --force
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+    # - name: Commit and Push dist to gh-pages
+    #   run: |
+    #     git checkout rework
+    #     git add dist
+    #     git commit -m "Initial dist subtree commit" || echo "No changes to commit"
+    #     git push origin rework `git subtree split --prefix dist rework`:gh-pages --force
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
