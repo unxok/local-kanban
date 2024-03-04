@@ -5,6 +5,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Given an array of objects, finds duplicate objects by the given property name and removes the extra objects
+ * @param arr The array to remove from
+ * @param key The property to resolve duplications on
+ * @returns The same array but with only unique objects by property value
+ */
+export const removeDuplicateObjects = (
+  arr: Record<string, any>[],
+  key: string,
+) => {
+  return [...new Map(arr.map((item) => [item[key], item])).values()];
+};
+
 export type Color =
   | "default"
   | "red"
@@ -18,19 +31,19 @@ export type Color =
 export const getBgColor = (color: Color) => {
   switch (color) {
     case "red":
-      return "bg-red-500/50";
+      return "bg-red-500/10";
     case "orange":
-      return "bg-orange-500/50";
+      return "bg-orange-500/10";
     case "yellow":
-      return "bg-yellow-500/50";
+      return "bg-yellow-500/10";
     case "green":
-      return "bg-green-500/50";
+      return "bg-green-500/10";
     case "blue":
-      return "bg-blue-500/50";
+      return "bg-blue-500/10";
     case "purple":
-      return "bg-purple-500/50";
+      return "bg-purple-500/10";
     case "pink":
-      return "bg-pink-500/50";
+      return "bg-pink-500/10";
     default:
       return "";
   }

@@ -1,44 +1,47 @@
-import { BoardConfig, LaneConfig } from "../../..";
+import { useSaveContext } from "@/components/SaveProvider";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
+  AlertDialogHeader,
+  AlertDialogFooter,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Label } from "@/components/ui/label";
-import { useSaveContext } from "@/components/SaveProvider";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
+import { useState, useEffect } from "react";
+import { LaneCardConfig, BoardConfig } from "../../..";
+import { Label } from "@/components/ui/label";
 
-const defaultFormState: LaneConfig = {
-  title: "TO DO",
-  sortValue: "todo",
-  description: "things to do",
-  bg: "green",
+const defaultFormState: LaneCardConfig = {
+  title: "Unnamed card",
 };
-
-export const AddLaneModal = ({
+export const AddCardModal = ({
   boardConfig,
   open,
   onOpenChange,
+  defaultSortValue,
   defaultData,
 }: {
   boardConfig: BoardConfig;
   open: boolean;
   onOpenChange: (b: boolean) => void;
-  defaultData?: LaneConfig;
+  defaultSortValue: string;
+  defaultData?: LaneCardConfig;
 }) => {
-  const [errMsgArr, setErrMsgArr] = useState<string[] | null>(null);
   const [formState, setFormState] = useState(defaultData || defaultFormState);
+  const [errMsgArr, setErrMsgArr] = useState<string[] | null>(null);
   const { updateBoard, checkDuplicate } = useSaveContext();
 
-  const updateFormState = (id: string, value: string) => {
+  useEffect(() => console.log(formState), [formState]);
+
+  const updateFormState = (
+    id: string,
+    value: string | string[] | Record<string, string>,
+  ) => {
     setFormState((prev) => ({
       ...prev,
       [id]: value,
@@ -49,19 +52,28 @@ export const AddLaneModal = ({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     const errors = [];
-    if (!formState.title) errors.push("Must have a non-blank Title");
-    if (!formState.sortValue) errors.push("Must have a non-blank Sort Value");
-    if (checkDuplicate("lane", formState.title, boardConfig.title))
+    const matchedValue = formState?.properties?.[boardConfig.sortProperty];
+    if (!matchedValue)
+      errors.push("Card doesn't have value matching sortProperty");
+    const matchedLane = boardConfig?.lanes?.find(
+      (l) => l.sortValue === matchedValue,
+    );
+    if (!matchedLane)
+      errors.push("Card's matched sortValue doesn't match any lanes");
+    if (!boardConfig.lanes)
+      errors.push("Error: Board has no lanes. You should never see this");
+    if (!formState.title) errors.push("Must have non-blank Title");
+    if (checkDuplicate("card", formState.title, boardConfig.title))
       errors.push(`Board title "${formState.title}" is already in use`);
     if (errors.length) {
       setErrMsgArr(errors);
       e.preventDefault();
       return;
     }
-    const currentLanes = boardConfig.lanes ? [...boardConfig.lanes] : [];
+    const foundCards = boardConfig.cards ? boardConfig.cards : [];
     const newBoardState = {
       ...boardConfig,
-      lanes: [...currentLanes, formState],
+      cards: [...foundCards, formState],
     };
     updateBoard(newBoardState);
   };
@@ -71,9 +83,10 @@ export const AddLaneModal = ({
       {open && (
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add a new lane</AlertDialogTitle>
+            <AlertDialogTitle>Add a new card</AlertDialogTitle>
             <AlertDialogDescription>
-              You can add cards after creating the lane.
+              Be sure to set a property and value corresponding with your board
+              and one of your lane's settings
             </AlertDialogDescription>
             {errMsgArr && (
               <Alert variant={"destructive"}>
@@ -97,22 +110,31 @@ export const AddLaneModal = ({
                   className="w-1/2"
                   type="text"
                   id="title"
-                  placeholder="TO DO"
+                  placeholder="Unnamed Card"
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }
                 />
               </div>
+
+              <PropertiesInput
+                defaultSortValue={defaultSortValue}
+                sortProperty={boardConfig.sortProperty}
+                updateFormState={updateFormState}
+              />
               <div className="flex flex-row items-center justify-between">
-                <Label htmlFor="sortValue">Sort Value</Label>
+                <Label htmlFor="tags">Tags (optional)</Label>
                 <Input
                   className="w-1/2"
                   type="text"
-                  id="sortValue"
-                  placeholder="todo"
-                  onInput={(e) =>
-                    updateFormState(e.currentTarget.id, e.currentTarget.value)
-                  }
+                  id="tags"
+                  placeholder="todo, task, a thing, etc ..."
+                  onInput={(e) => {
+                    const value = e.currentTarget.value
+                      .split(",")
+                      .map((t) => t.trim());
+                    updateFormState(e.currentTarget.id, value);
+                  }}
                 />
               </div>
               <div className="flex flex-row items-center justify-between">
@@ -152,5 +174,58 @@ export const AddLaneModal = ({
         </AlertDialogContent>
       )}
     </AlertDialog>
+  );
+};
+
+export const PropertiesInput = ({
+  defaultSortValue,
+  sortProperty,
+  updateFormState,
+}: {
+  defaultSortValue: string;
+  sortProperty: string;
+  updateFormState: (
+    id: string,
+    value: string | string[] | Record<string, string>,
+  ) => void;
+}) => {
+  const [inputValue, setInputValue] = useState<string>(
+    defaultSortValue && `${sortProperty}: ${defaultSortValue}`,
+  );
+  useEffect(
+    () =>
+      updateFormState("properties", {
+        [sortProperty]: defaultSortValue,
+      }),
+    [],
+  );
+  return (
+    <div className="flex flex-row items-center justify-between">
+      <Label htmlFor="properties">
+        <div>Properties</div>
+        <div className="text-sm text-primary">{sortProperty}</div>
+      </Label>
+      <Input
+        className="w-1/2"
+        type="text"
+        id="properties"
+        // placeholder="todo"
+        value={inputValue}
+        onInput={(e) => {
+          setInputValue(e.currentTarget.value);
+          const value = e.currentTarget.value
+            .split(",")
+            .map((pv) => pv.trim())
+            .reduce<Record<string, string>>((acc, val) => {
+              const [propName, propValue] = val.split(":").map((v) => v.trim());
+              return {
+                ...acc,
+                [propName]: propValue,
+              };
+            }, {});
+          updateFormState(e.currentTarget.id, value);
+        }}
+      />
+    </div>
   );
 };

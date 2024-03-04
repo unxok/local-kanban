@@ -2,7 +2,6 @@ import { ResizablePanel } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Board } from "./Board";
 import { useSaveContext } from "@/components/SaveProvider";
-import { useEffect } from "react";
 
 export type LaneCardConfig = {
   title: string;
@@ -102,7 +101,6 @@ export const fakeBoards: BoardConfig[] = [
 export const Main = () => {
   const { boardData } = useSaveContext();
   const boardKeys = Object.keys(boardData);
-  useEffect(() => console.log("data: ", boardData), [boardData]);
 
   return (
     <ResizablePanel className="relative h-full" id="main">

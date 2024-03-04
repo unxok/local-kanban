@@ -8,14 +8,18 @@ import {
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { BoardConfig } from "../..";
+import { useSaveContext } from "@/components/SaveProvider";
 export const BoardOptionsButton = ({
-  // boardConfig,
+  boardConfig,
   setLaneModalOpen,
+  setBoardModalOpen,
 }: {
   boardConfig: BoardConfig;
   setLaneModalOpen: (value: React.SetStateAction<boolean>) => void;
+  setBoardModalOpen: (value: React.SetStateAction<boolean>) => void;
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const { deleteBoard } = useSaveContext();
   return (
     <DropdownMenu
       open={isMenuOpen}
@@ -33,14 +37,22 @@ export const BoardOptionsButton = ({
       <DropdownMenuContent>
         {/* <DropdownMenuLabel>Board options</DropdownMenuLabel>
           <DropdownMenuSeparator /> */}
-        <DropdownMenuItem>Edit details</DropdownMenuItem>
+        <DropdownMenuItem
+          className="w-full"
+          onClick={() => setBoardModalOpen((prev) => !prev)}
+        >
+          Edit board
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="w-full"
           onClick={() => setLaneModalOpen((prev) => !prev)}
         >
           Add lane
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">
+        <DropdownMenuItem
+          className="w-full text-destructive"
+          onClick={() => deleteBoard(boardConfig.title)}
+        >
           Delete board
         </DropdownMenuItem>
       </DropdownMenuContent>

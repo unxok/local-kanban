@@ -1,6 +1,5 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ResizablePanel } from "@/components/ui/resizable";
-import { GearIcon } from "@radix-ui/react-icons";
 import { SettingsButton } from "./SettingsButton";
 
 export const Nav = () => (
