@@ -33,6 +33,7 @@ export const AddCardModal = ({
   onOpenChange: (b: boolean) => void;
   defaultSortValue: string;
   defaultData?: LaneCardConfig;
+  setDefaultCardEditData: any;
 }) => {
   const [formState, setFormState] = useState(defaultData || defaultFormState);
   const [tagString, setTagString] = useState<string | undefined>(defaultData?.tags?.join(', '));
@@ -65,6 +66,7 @@ export const AddCardModal = ({
       cards: [...filteredFoundCards],
     };
     updateBoard(newBoardState);  
+    setDefaultCardEditData();
   }
 
   const handleFormSubmit = (
@@ -96,6 +98,7 @@ export const AddCardModal = ({
       cards: [...filteredFoundCards, formState],
     };
     updateBoard(newBoardState);
+    setDefaultCardEditData();
   };
 
   return (
@@ -186,7 +189,10 @@ export const AddCardModal = ({
             <AlertDialogCancel className={buttonVariants({variant: 'destructiveGhost'})} onClick={() => handleDelete()}>
               Delete
             </AlertDialogCancel>
-            <AlertDialogCancel onClick={() => setFormState(defaultFormState)}>
+            <AlertDialogCancel onClick={() => {
+          setFormState(defaultFormState);
+          setDefaultCardEditData();
+        }}>
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction onClick={(e) => handleFormSubmit(e)}>
