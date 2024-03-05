@@ -34,10 +34,17 @@ export const AddCardModal = ({
   defaultData?: LaneCardConfig;
 }) => {
   const [formState, setFormState] = useState(defaultData || defaultFormState);
+  const [tagString, setTagString] = useState<string | undefined>(defaultData?.tags);
   const [errMsgArr, setErrMsgArr] = useState<string[] | null>(null);
   const { updateBoard, checkDuplicate } = useSaveContext();
 
-  useEffect(() => console.log(formState), [formState]);
+  useEffect(() => {
+    if (!tagString) return updateFormState('tags', undefined);
+    const tagArr = tagString
+      .split(",")
+      .map((t) => t.trim());
+    updateFormState('tags', tagArr);
+  }, [tagString]);
 
   const updateFormState = (
     id: string,
@@ -111,6 +118,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="title"
+                  value={formState.title}
                   placeholder="Unnamed Card"
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
@@ -129,13 +137,9 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="tags"
+                  value={formState.tags.}
                   placeholder="todo, task, a thing, etc ..."
-                  onInput={(e) => {
-                    const value = e.currentTarget.value
-                      .split(",")
-                      .map((t) => t.trim());
-                    updateFormState(e.currentTarget.id, value);
-                  }}
+                  onInput={(e) => setTagString(e.currentTarget.value)}
                 />
               </div>
               <div className="flex flex-row items-center justify-between">
