@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea"
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import { LaneCardConfig, BoardConfig } from "../../..";
@@ -151,7 +152,7 @@ export const AddCardModal = ({
               </div>
               <div className="flex flex-row items-center justify-between">
                 <Label htmlFor="bg">Notes (optional)</Label>
-                <Input
+                <Textarea
                   className="w-1/2"
                   type="text"
                   id="bg"
