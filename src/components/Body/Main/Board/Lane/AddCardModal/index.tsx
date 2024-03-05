@@ -90,7 +90,7 @@ export const AddCardModal = ({
       return;
     }
     const foundCards = boardConfig.cards ? [...boardConfig.cards] : [];
-    const filteredFoundCards = foundCards.filter(c => c.title === formState.title) || [];
+    const filteredFoundCards = foundCards.filter(c => c.title !== formState.title) || [];
     const newBoardState = {
       ...boardConfig,
       cards: [...filteredFoundCards, formState],
