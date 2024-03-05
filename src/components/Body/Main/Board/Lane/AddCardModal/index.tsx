@@ -56,6 +56,16 @@ export const AddCardModal = ({
     }));
   };
 
+  const handleDelete = () => {
+    const foundCards = boardConfig.cards ? [...boardConfig.cards] : [];
+    const filteredFoundCards = foundCards.filter(c => c.title === formState.title) || [];
+    const newBoardState = {
+      ...boardConfig,
+      cards: [...filteredFoundCards],
+    };
+    updateBoard(newBoardState);  
+  }
+
   const handleFormSubmit = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
@@ -71,17 +81,18 @@ export const AddCardModal = ({
     if (!boardConfig.lanes)
       errors.push("Error: Board has no lanes. You should never see this");
     if (!formState.title) errors.push("Must have non-blank Title");
-    if (checkDuplicate("card", formState.title, boardConfig.title))
-      errors.push(`Board title "${formState.title}" is already in use`);
+    if (!defaultData.title && checkDuplicate("card", formState.title, boardConfig.title))
+      errors.push(`Card title "${formState.title}" is already in use`);
     if (errors.length) {
       setErrMsgArr(errors);
       e.preventDefault();
       return;
     }
-    const foundCards = boardConfig.cards ? boardConfig.cards : [];
+    const foundCards = boardConfig.cards ? [...boardConfig.cards] : [];
+    const filteredFoundCards = foundCards.filter(c => c.title === formState.title) || [];
     const newBoardState = {
       ...boardConfig,
-      cards: [...foundCards, formState],
+      cards: [...filteredFoundCards, formState],
     };
     updateBoard(newBoardState);
   };
@@ -118,6 +129,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="title"
+                  disabled={defaultData.title ? true : false}
                   value={formState.title}
                   placeholder="Unnamed Card"
                   onInput={(e) =>
@@ -137,7 +149,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="tags"
-                  value={formState.tags}
+                  value={tagString}
                   placeholder="todo, task, a thing, etc ..."
                   onInput={(e) => setTagString(e.currentTarget.value)}
                 />
@@ -148,6 +160,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="description"
+                  value={formState.description}
                   placeholder="A short sentence..."
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
@@ -155,11 +168,12 @@ export const AddCardModal = ({
                 />
               </div>
               <div className="flex flex-row items-center justify-between">
-                <Label htmlFor="bg">Notes (optional)</Label>
+                <Label htmlFor="notes">Notes (optional)</Label>
                 <Textarea
                   className="w-1/2"
-                  id="bg"
-                  placeholder="red"
+                  id="notes"
+                  placeholder="markdown support coming soon..."
+                  value={formState.notes}
                   onInput={(e) =>
                     updateFormState(e.currentTarget.id, e.currentTarget.value)
                   }
@@ -168,11 +182,14 @@ export const AddCardModal = ({
             </form>
           </AlertDialogHeader>
           <AlertDialogFooter>
+            <AlertDialogCancel variant={'destructiveGhost'} onClick={() => handleDelete()}>
+              Delete
+            </AlertDialogCancel>
             <AlertDialogCancel onClick={() => setFormState(defaultFormState)}>
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction onClick={(e) => handleFormSubmit(e)}>
-              Create
+              {defaultData ? 'Update' : 'Create'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
