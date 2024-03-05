@@ -1,4 +1,4 @@
-name: Build and add to gh-pages branch
+name: rework dist to gh-pages branch
 
 on: workflow_dispatch
 
