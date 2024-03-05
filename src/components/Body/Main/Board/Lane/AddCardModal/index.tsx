@@ -137,7 +137,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="tags"
-                  value={formState.tags.}
+                  value={formState.tags}
                   placeholder="todo, task, a thing, etc ..."
                   onInput={(e) => setTagString(e.currentTarget.value)}
                 />
