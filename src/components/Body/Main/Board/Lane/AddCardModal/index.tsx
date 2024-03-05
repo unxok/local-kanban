@@ -27,6 +27,7 @@ export const AddCardModal = ({
   onOpenChange,
   defaultSortValue,
   defaultData,
+  setDefaultCardEditData,
 }: {
   boardConfig: BoardConfig;
   open: boolean;
