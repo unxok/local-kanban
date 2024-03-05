@@ -39,7 +39,7 @@ export const AddCardModal = ({
   const { updateBoard, checkDuplicate } = useSaveContext();
 
   useEffect(() => {
-    if (!tagString) return updateFormState('tags', undefined);
+    if (!tagString) return updateFormState('tags', []);
     const tagArr = tagString
       .split(",")
       .map((t) => t.trim());
