@@ -154,7 +154,6 @@ export const AddCardModal = ({
                 <Label htmlFor="bg">Notes (optional)</Label>
                 <Textarea
                   className="w-1/2"
-                  type="text"
                   id="bg"
                   placeholder="red"
                   onInput={(e) =>
