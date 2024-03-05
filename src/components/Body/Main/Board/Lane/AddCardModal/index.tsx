@@ -82,7 +82,7 @@ export const AddCardModal = ({
     if (!boardConfig.lanes)
       errors.push("Error: Board has no lanes. You should never see this");
     if (!formState.title) errors.push("Must have non-blank Title");
-    if (!defaultData.title && checkDuplicate("card", formState.title, boardConfig.title))
+    if (!defaultData?.title && checkDuplicate("card", formState.title, boardConfig.title))
       errors.push(`Card title "${formState.title}" is already in use`);
     if (errors.length) {
       setErrMsgArr(errors);
@@ -130,7 +130,7 @@ export const AddCardModal = ({
                   className="w-1/2"
                   type="text"
                   id="title"
-                  disabled={defaultData.title ? true : false}
+                  disabled={defaultData?.title ? true : false}
                   value={formState.title}
                   placeholder="Unnamed Card"
                   onInput={(e) =>
