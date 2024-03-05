@@ -34,7 +34,7 @@ export const AddCardModal = ({
   defaultData?: LaneCardConfig;
 }) => {
   const [formState, setFormState] = useState(defaultData || defaultFormState);
-  const [tagString, setTagString] = useState<string | undefined>(defaultData?.tags);
+  const [tagString, setTagString] = useState<string | undefined>(defaultData?.tags?.join(', '));
   const [errMsgArr, setErrMsgArr] = useState<string[] | null>(null);
   const { updateBoard, checkDuplicate } = useSaveContext();
 
