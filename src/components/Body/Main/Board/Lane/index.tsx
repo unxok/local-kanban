@@ -172,6 +172,7 @@ export const Lane = (props: LaneConfig & { boardConfig: BoardConfig }) => {
               onOpenChange={setCardModalOpen}
               defaultSortValue={sortValue}
               defaultData={defaultCardEditData}
+              setDefaultCardEditData={setDefaultCardEditData}
             />
           )}
         </CardFooter>
