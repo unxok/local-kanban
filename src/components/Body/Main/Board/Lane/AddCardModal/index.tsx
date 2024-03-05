@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea"
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
@@ -182,7 +183,7 @@ export const AddCardModal = ({
             </form>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel variant={'destructiveGhost'} onClick={() => handleDelete()}>
+            <AlertDialogCancel className={buttonVariants({variant: 'destructiveGhost'})} onClick={() => handleDelete()}>
               Delete
             </AlertDialogCancel>
             <AlertDialogCancel onClick={() => setFormState(defaultFormState)}>
