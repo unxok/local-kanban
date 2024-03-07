@@ -9,6 +9,7 @@ import {
 import { GearIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { toast } from "sonner";
+import { downloadToFile } from "@/utils"
 
 export const SettingsButton = () => {
   const [isSheetOpen, setSheetOpen] = useState(false);
@@ -17,6 +18,10 @@ export const SettingsButton = () => {
     navigator.clipboard.writeText(JSON.stringify(localStorage));
     toast.success("Save data copied to clipboard");
   };
+
+  const exportToFile = () => {
+    downloadToFile(JSON.stringify(localStorage), 'save.localkanban', 'application/json');
+  }
 
   const importLSFromClipboard = () => {
     const text = window.prompt("Please paste your save data below");
@@ -75,14 +80,21 @@ export const SettingsButton = () => {
                   className="flex w-full flex-row justify-start"
                   onClick={() => copyLSToClipboard()}
                 >
-                  Export
+                  Export to clipboard
+                </Button>
+                <Button
+                  variant={"ghost"}
+                  className="flex w-full flex-row justify-start"
+                  onClick={() => exportToFile()}
+                >
+                  Export to file
                 </Button>
                 <Button
                   variant={"ghost"}
                   className="flex w-full flex-row justify-start"
                   onClick={() => importLSFromClipboard()}
                 >
-                  Import
+                  Import from clipboard
                 </Button>
                 <Button
                   variant={"ghost"}
