@@ -23,6 +23,40 @@ export const SettingsButton = () => {
     downloadToFile(JSON.stringify(localStorage), 'save.localkanban', 'application/json');
   }
 
+  const importFromFile = () => {
+    const inp = document.createElement('input');
+    const reader = new FileReader();
+    inp.type = 'file';
+    
+    inp.addEventListener('change', () => {
+      const file = inp?.files?.[0];
+      if (!file) {
+      toast.error("Import save data failed! \nNo data was provided");
+      return;
+      reader.readAsText(file)
+    })
+    
+    reader.addEventListener('load', () => {
+      try {
+        const json = JSON.parse(reader.result);
+        Object.keys(json).forEach((k) => localStorage.setItem(k, json[k]));
+        window.location.reload();
+        return;
+      } catch (e) {
+          toast.error(
+            "Import save data failed! \nCheck console for more information",
+          );
+          console.error(
+            "Error occured when attempting to parse JSON from text provided. ",
+            e,
+          );
+          return;
+      }
+    })
+
+    inp.click()
+  }
+
   const importLSFromClipboard = () => {
     const text = window.prompt("Please paste your save data below");
     if (!text) {
@@ -95,6 +129,13 @@ export const SettingsButton = () => {
                   onClick={() => importLSFromClipboard()}
                 >
                   Import from clipboard
+                </Button>
+                <Button
+                  variant={"ghost"}
+                  className="flex w-full flex-row justify-start"
+                  onClick={() => importFromFile()}
+                >
+                  Import from file
                 </Button>
                 <Button
                   variant={"ghost"}
