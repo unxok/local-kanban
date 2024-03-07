@@ -38,6 +38,10 @@ export const SettingsButton = () => {
     })
     
     reader.addEventListener('load', () => {
+      if (!typeof reader.result === 'string') {
+        toast.error("Import save data failed!\nUnexpected file contents");
+        return;
+      }
       try {
         const json = JSON.parse(reader.result);
         Object.keys(json).forEach((k) => localStorage.setItem(k, json[k]));
