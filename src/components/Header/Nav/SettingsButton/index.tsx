@@ -38,7 +38,7 @@ export const SettingsButton = () => {
     })
     
     reader.addEventListener('load', () => {
-      if (!typeof reader.result === 'string') {
+      if (!(typeof reader.result === 'string')) {
         toast.error("Import save data failed!\nUnexpected file contents");
         return;
       }
