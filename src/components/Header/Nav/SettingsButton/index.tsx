@@ -33,6 +33,7 @@ export const SettingsButton = () => {
       if (!file) {
       toast.error("Import save data failed! \nNo data was provided");
       return;
+      }
       reader.readAsText(file)
     })
     
