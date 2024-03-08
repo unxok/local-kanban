@@ -58,10 +58,12 @@ export const LaneCard = (
         className="w-full basis-full hover:cursor-grab hover:active:cursor-grabbing"
       >
         <CardHeader className="p-4 pb-1">
-          <CardTitle className="line-clamp-1 text-primary">{title}</CardTitle>
-          <CardDescription className="line-clamp-1">
-            {description ? description : <br />}
+          <CardTitle className="text-wrap">{title}</CardTitle>
+          {description &&
+          <CardDescription className="">
+            {description}
           </CardDescription>
+          }
         </CardHeader>
         <CardContent className="flex flex-row justify-between p-4 pt-1">
           <div>{tags ? <CardTags tags={tags} /> : <br />}</div>
