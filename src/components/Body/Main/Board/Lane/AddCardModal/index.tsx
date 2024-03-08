@@ -107,7 +107,7 @@ export const AddCardModal = ({
       {open && (
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add a new card</AlertDialogTitle>
+            <AlertDialogTitle>{defaultData ? `Editing ${defaultData.title}` : "Add a new card"}</AlertDialogTitle>
             <AlertDialogDescription>
               Be sure to set a property and value corresponding with your board
               and one of your lane's settings
@@ -187,9 +187,11 @@ export const AddCardModal = ({
             </form>
           </AlertDialogHeader>
           <AlertDialogFooter>
+            {defaultData &&
             <AlertDialogCancel className={buttonVariants({variant: 'destructiveGhost'})} onClick={() => handleDelete()}>
               Delete
             </AlertDialogCancel>
+            }
             <AlertDialogCancel onClick={() => {
           setFormState(defaultFormState);
           setDefaultCardEditData();
