@@ -11,10 +11,10 @@ export const Nav = () => (
       <a href="/" className={buttonVariants({ variant: "link" })}>
         Home
       </a>
-      <a href="/about" className={buttonVariants({ variant: "link" })}>
+      <a href="https://github.com/unxok/local-kanban/" className={buttonVariants({ variant: "link" })}>
         About
       </a>
-      <a href="/docs" className={buttonVariants({ variant: "link" })}>
+      <a href="https://github.com/unxok/local-kanban/" className={buttonVariants({ variant: "link" })}>
         Docs
       </a>
     </div>
