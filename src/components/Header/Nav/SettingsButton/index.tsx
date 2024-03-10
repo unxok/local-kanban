@@ -9,7 +9,17 @@ import {
 import { GearIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { toast } from "sonner";
-import { downloadToFile } from "@/utils"
+import { downloadToFile } from "@/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Theme, useTheme } from "@/components/ThemeProvider";
+
+const defaultButtonClassName = "flex w-full flex-row justify-start";
 
 export const SettingsButton = () => {
   const [isSheetOpen, setSheetOpen] = useState(false);
@@ -20,25 +30,29 @@ export const SettingsButton = () => {
   };
 
   const exportToFile = () => {
-    downloadToFile(JSON.stringify(localStorage), 'save.localkanban', 'application/json');
-  }
+    downloadToFile(
+      JSON.stringify(localStorage),
+      "save.localkanban",
+      "application/json",
+    );
+  };
 
   const importFromFile = () => {
-    const inp = document.createElement('input');
+    const inp = document.createElement("input");
     const reader = new FileReader();
-    inp.type = 'file';
-    
-    inp.addEventListener('change', () => {
+    inp.type = "file";
+
+    inp.addEventListener("change", () => {
       const file = inp?.files?.[0];
       if (!file) {
-      toast.error("Import save data failed! \nNo data was provided");
-      return;
+        toast.error("Import save data failed! \nNo data was provided");
+        return;
       }
-      reader.readAsText(file)
-    })
-    
-    reader.addEventListener('load', () => {
-      if (!(typeof reader.result === 'string')) {
+      reader.readAsText(file);
+    });
+
+    reader.addEventListener("load", () => {
+      if (!(typeof reader.result === "string")) {
         toast.error("Import save data failed!\nUnexpected file contents");
         return;
       }
@@ -48,19 +62,19 @@ export const SettingsButton = () => {
         window.location.reload();
         return;
       } catch (e) {
-          toast.error(
-            "Import save data failed! \nCheck console for more information",
-          );
-          console.error(
-            "Error occured when attempting to parse JSON from text provided. ",
-            e,
-          );
-          return;
+        toast.error(
+          "Import save data failed! \nCheck console for more information",
+        );
+        console.error(
+          "Error occured when attempting to parse JSON from text provided. ",
+          e,
+        );
+        return;
       }
-    })
+    });
 
-    inp.click()
-  }
+    inp.click();
+  };
 
   const importLSFromClipboard = () => {
     const text = window.prompt("Please paste your save data below");
@@ -96,7 +110,7 @@ export const SettingsButton = () => {
         <GearIcon
           height={20}
           width={20}
-          className="transition-transform group-hover:animate-spin"
+          className="text-black transition-transform group-hover:animate-spin"
         />
       </Button>
       {isSheetOpen && (
@@ -108,12 +122,7 @@ export const SettingsButton = () => {
             <SheetHeader>
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="flex w-full flex-col items-start justify-center gap-1">
-                <Button
-                  variant={"ghost"}
-                  className="flex w-full flex-row justify-start"
-                >
-                  Theme
-                </Button>
+                <ThemeSelector />
                 <Button
                   variant={"ghost"}
                   className="flex w-full flex-row justify-start"
@@ -168,5 +177,24 @@ export const SettingsButton = () => {
         </Sheet>
       )}
     </>
+  );
+};
+
+const ThemeSelector = () => {
+  const { theme, setTheme } = useTheme();
+  const handleThemeChange = (val: string) => {
+    setTheme(val as Theme);
+  };
+  return (
+    <Select onValueChange={(v) => handleThemeChange(v)}>
+      <SelectTrigger>
+        <SelectValue placeholder={`Theme: ${theme}`} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light">Light</SelectItem>
+        <SelectItem value="dark">Dark</SelectItem>
+        <SelectItem value="system">System</SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
