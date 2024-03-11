@@ -1,53 +1,56 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BoardConfig } from "@/localSave";
+import { LaneConfig } from "@/localSave";
 import { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { v4 as uuidv4 } from "uuid";
 import { UpdateBoardsType } from "@/App";
 import { toast } from "sonner";
+import { useVariant } from "../VariantProvider";
+import { cardVariants } from "../ui/card";
 
-type BoardModalProps = {
+type LaneModalProps = {
   open: boolean;
   onOpenChange: (b: boolean) => void;
-  defaultData?: BoardConfig;
+  defaultData?: LaneConfig;
   updateBoards: UpdateBoardsType;
+  boardId: string;
 };
 
-type UpdateFormStateType = (name: keyof BoardConfig, value: any) => void;
+type UpdateFormStateType = (name: keyof LaneConfig, value: any) => void;
 
-export const BoardModal = ({
+export const LaneModal = ({
   open,
   onOpenChange,
   defaultData,
   updateBoards,
-}: BoardModalProps) => {
-  const [formState, setFormState] = useState<Partial<BoardConfig> | undefined>(
-    defaultData || {
-      id: uuidv4(),
-    },
+  boardId,
+}: LaneModalProps) => {
+  const [formState, setFormState] = useState<Partial<LaneConfig> | undefined>(
+    defaultData || {},
   );
   const [hasInvalid, setHasInvalid] = useState(false);
+  const { variant } = useVariant();
 
   const updateFormState: UpdateFormStateType = (name, value) => {
-    console.log("im here");
     setFormState((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     // TODO add zod validation?? I kind of have validation already, but really I should be validating here too right?
-
     // means we are updating
     if (defaultData) {
       updateBoards((prev) => {
@@ -57,23 +60,58 @@ export const BoardModal = ({
           return undefined;
         }
         const copyPrev = [...prev];
-        const foundBoardIndex = copyPrev.findIndex(
-          (b) => b.id === formState?.id,
-        );
+        const foundBoardIndex = copyPrev.findIndex((b) => b.id === boardId);
         if (foundBoardIndex === -1) {
           toast.error("This should never happen! Check console");
           console.error("Couldn't find board you're trying to update.");
           return copyPrev;
         }
-        copyPrev[foundBoardIndex] = formState as BoardConfig;
+        if (!copyPrev[foundBoardIndex].lanes) {
+          toast.error("This should never happen! Check console");
+          console.error("Tried to update a lane when none exist");
+          return copyPrev;
+        }
+        const foundLaneIndex = copyPrev[foundBoardIndex].lanes?.findIndex(
+          (l) => l.sortValue === formState?.sortValue,
+        );
+        if (foundLaneIndex === -1) {
+          toast.error("This should never happen! Check console");
+          console.error("Couldn't find lane you're trying to update.");
+          return copyPrev;
+        }
+        // @ts-ignore TODO typescipt being dumb
+        copyPrev[foundBoardIndex].lanes[foundLaneIndex] =
+          formState as LaneConfig;
         return copyPrev;
       });
     }
-
     // means we are creating new
     updateBoards((prev) => {
-      const copyPrev = prev ? [...prev] : [];
-      return [...copyPrev, formState as BoardConfig];
+      const copyPrev = prev ? prev : undefined;
+      if (!copyPrev) {
+        toast.error("This should never happen! Check console");
+        console.error("Tried adding a lane when no boards exist");
+        return copyPrev;
+      }
+      const foundBoard = copyPrev.findIndex((b) => b.id === boardId);
+      if (foundBoard === -1) {
+        toast.error("This should never happen! Check console");
+        console.error("Tried adding lane to non-existent board");
+        return prev;
+      }
+      copyPrev[foundBoard].lanes = copyPrev[foundBoard].lanes
+        ? copyPrev[foundBoard].lanes
+        : [];
+      const hasThisLaneAlready = copyPrev[foundBoard].lanes?.some(
+        (l) => l.sortValue === formState?.sortValue,
+      );
+      if (hasThisLaneAlready) {
+        toast.error("You already have a lane with that Sort Value!");
+        e.preventDefault();
+        return prev;
+      }
+      copyPrev[foundBoard]?.lanes?.push(formState as LaneConfig);
+      return [...copyPrev];
     });
   };
 
@@ -81,38 +119,48 @@ export const BoardModal = ({
     updateBoards((prev) => {
       if (!prev) {
         toast.error("This should never happen! Check console");
-        console.error("Tried to delete a board when none exist");
+        console.error("Tried to delete a lane when no boards exist");
         return undefined;
       }
-      return prev.filter((b) => b.id !== formState?.id);
+      const foundBoardIndex = prev.findIndex((b) => b.id === boardId);
+      if (foundBoardIndex === -1) {
+        toast.error("This should never happen! Check console");
+        console.error("Tried deleting a lane from non-existent board");
+        return prev;
+      }
+      const copyPrev = [...prev];
+      copyPrev[foundBoardIndex].lanes = copyPrev[
+        foundBoardIndex
+      ]?.lanes?.filter((l) => l.sortValue !== formState?.sortValue);
+      return copyPrev;
     });
   };
 
   useEffect(() => {
     console.log(formState);
-    if (!formState?.title || !formState?.sortProperty)
-      return setHasInvalid(true);
+    if (!formState?.title || !formState?.sortValue) return setHasInvalid(true);
     setHasInvalid(false);
   }, [formState]);
   // useEffect(() => console.log(hasInvalid), [hasInvalid]);
 
   return (
     <Dialog open={open} onOpenChange={(b) => onOpenChange(b)}>
-      <DialogContent onFocusOutside={() => setFormState(undefined)}>
+      <DialogContent
+        className={cardVariants({ variant: variant })}
+        onFocusOutside={() => setFormState(undefined)}
+      >
         <DialogHeader>
           <DialogTitle>
             {defaultData?.title
-              ? `Updating ${defaultData.title} board`
-              : "New board"}
+              ? `Updating ${defaultData.title} lane`
+              : "New lane"}
           </DialogTitle>
           <DialogDescription className="flex flex-col gap-1">
-            {!defaultData && (
-              <span>You can add lanes and cards after creation.</span>
-            )}
+            {!defaultData && <span>You can add cards after creation.</span>}
             <span>
               Confused?{" "}
               <a
-                className="text-primary hover:cursor-pointer hover:underline"
+                className="text-accent-foreground underline hover:cursor-pointer"
                 href="https://github.com/unxok/local-kanban"
               >
                 read the docs!
@@ -122,7 +170,7 @@ export const BoardModal = ({
         </DialogHeader>
         <form className="flex flex-col gap-4">
           <TitleInput formState={formState} updateFormState={updateFormState} />
-          <SortPropertyInput
+          <SortValueInput
             formState={formState}
             updateFormState={updateFormState}
           />
@@ -130,17 +178,19 @@ export const BoardModal = ({
             formState={formState}
             updateFormState={updateFormState}
           />
-          <NotesInput formState={formState} updateFormState={updateFormState} />
+          {/* <NotesInput formState={formState} updateFormState={updateFormState} /> */}
         </form>
         <DialogFooter>
           {defaultData && <DeleteButton handleFormDelete={handleFormDelete} />}
-          <Button
-            disabled={hasInvalid}
-            type="submit"
-            onClick={handleFormSubmit}
-          >
-            {defaultData ? "Update" : "Create"}
-          </Button>
+          <DialogClose asChild>
+            <Button
+              disabled={hasInvalid}
+              type="submit"
+              onClick={(e) => handleFormSubmit(e)}
+            >
+              {defaultData ? "Update" : "Create"}
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -151,7 +201,7 @@ const TitleInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<LaneConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   const [isValid, setValidity] = useState(true);
@@ -170,7 +220,7 @@ const TitleInput = ({
         id="title"
         type="text"
         value={formState?.title || ""}
-        placeholder={!isValid ? "required!" : "My Tasks..."}
+        placeholder={!isValid ? "required!" : "TO DO"}
         onInput={(e) => updateFormState("title", e.currentTarget.value)}
         onBlur={() => checkValidity()}
         onFocus={() => setValidity(true)}
@@ -180,17 +230,17 @@ const TitleInput = ({
   );
 };
 
-const SortPropertyInput = ({
+const SortValueInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<LaneConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   const [isValid, setValidity] = useState(true);
 
   const checkValidity = () => {
-    if (!formState?.sortProperty) {
+    if (!formState?.sortValue) {
       return setValidity(false);
     }
     setValidity(true);
@@ -198,13 +248,13 @@ const SortPropertyInput = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="sortProperty">Sort Property</Label>
+      <Label htmlFor="sortValue">Sort Value</Label>
       <Input
-        id="sortProperty"
+        id="sortValue"
         type="text"
-        value={formState?.sortProperty || ""}
-        placeholder={!isValid ? "required!" : "status"}
-        onInput={(e) => updateFormState("sortProperty", e.currentTarget.value)}
+        value={formState?.sortValue || ""}
+        placeholder={!isValid ? "required!" : "todo"}
+        onInput={(e) => updateFormState("sortValue", e.currentTarget.value)}
         onBlur={() => checkValidity()}
         onFocus={() => setValidity(true)}
         className={!isValid ? "border-destructive" : ""}
@@ -217,7 +267,7 @@ const DescriptionInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<LaneConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   return (
@@ -227,33 +277,33 @@ const DescriptionInput = ({
         id="description"
         type="text"
         value={formState?.description || ""}
-        placeholder="my tasks for the day..."
+        placeholder="do these tasks..."
         onInput={(e) => updateFormState("description", e.currentTarget.value)}
       />
     </div>
   );
 };
 
-const NotesInput = ({
-  formState,
-  updateFormState,
-}: {
-  formState: Partial<BoardConfig> | undefined;
-  updateFormState: UpdateFormStateType;
-}) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="notes">Notes</Label>
-      <Input
-        id="notes"
-        type="text"
-        value={formState?.notes || ""}
-        placeholder="make sure to check throughout the day..."
-        onInput={(e) => updateFormState("notes", e.currentTarget.value)}
-      />
-    </div>
-  );
-};
+// const NotesInput = ({
+//   formState,
+//   updateFormState,
+// }: {
+//   formState: Partial<LaneConfig> | undefined;
+//   updateFormState: UpdateFormStateType;
+// }) => {
+//   return (
+//     <div className="flex flex-col gap-2">
+//       <Label htmlFor="notes">Notes</Label>
+//       <Input
+//         id="notes"
+//         type="text"
+//         value={formState?.notes || ""}
+//         placeholder="make sure to check throughout the day..."
+//         onInput={(e) => updateFormState("notes", e.currentTarget.value)}
+//       />
+//     </div>
+//   );
+// };
 
 const DeleteButton = ({
   handleFormDelete,
@@ -263,12 +313,14 @@ const DeleteButton = ({
   const [isModalOpen, setModalOpen] = useState(false);
   return (
     <>
-      <Button
-        variant={"destructiveGhost"}
-        onClick={() => setModalOpen((prev) => !prev)}
-      >
-        Delete
-      </Button>
+      <DialogClose asChild>
+        <Button
+          variant={"destructiveGhost"}
+          onClick={() => setModalOpen((prev) => !prev)}
+        >
+          Delete
+        </Button>
+      </DialogClose>
       {isModalOpen && (
         <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
           <DialogContent>

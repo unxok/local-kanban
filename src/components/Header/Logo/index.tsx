@@ -9,9 +9,7 @@ export const Logo = () => (
     id="logo"
     className="flex flex-col items-center justify-center"
   >
-    <h1 className="text-3xl font-bold tracking-wider text-primary">
-      Local Kanban
-    </h1>
-    <p className="text-sm text-black">easy | offline | free | kanban</p>
+    <h1 className="text-3xl font-bold tracking-wider">Local Kanban</h1>
+    <p className="text-sm">easy | offline | free | kanban</p>
   </ResizablePanel>
 );

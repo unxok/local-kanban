@@ -20,7 +20,6 @@ export type BoardConfig = {
 };
 
 export type LaneConfig = {
-  id: string;
   title: string;
   description?: string;
   sortValue: string;

@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Theme, useTheme } from "@/components/ThemeProvider";
+import { Variant, useVariant } from "@/components/VariantProvider";
 
 const defaultButtonClassName = "flex w-full flex-row justify-start";
 
@@ -104,13 +105,13 @@ export const SettingsButton = () => {
       <Button
         aria-label="Settings"
         variant={"ghost"}
-        className="group text-muted-foreground"
+        className="group"
         onClick={() => setSheetOpen((prev) => !prev)}
       >
         <GearIcon
           height={20}
           width={20}
-          className="text-black transition-transform group-hover:animate-spin"
+          className="transition-transform group-hover:animate-spin"
         />
       </Button>
       {isSheetOpen && (
@@ -123,6 +124,7 @@ export const SettingsButton = () => {
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="flex w-full flex-col items-start justify-center gap-1">
                 <ThemeSelector />
+                <VariantSelector />
                 <Button
                   variant={"ghost"}
                   className="flex w-full flex-row justify-start"
@@ -194,6 +196,27 @@ const ThemeSelector = () => {
         <SelectItem value="light">Light</SelectItem>
         <SelectItem value="dark">Dark</SelectItem>
         <SelectItem value="system">System</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
+const VariantSelector = () => {
+  const { variant, setVariant } = useVariant();
+  const handleVariantChange = (val: string) => {
+    setVariant(val as Variant);
+  };
+  return (
+    <Select onValueChange={(v) => handleVariantChange(v)}>
+      <SelectTrigger>
+        <SelectValue placeholder={`Style: ${variant}`} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="default">Default</SelectItem>
+        <SelectItem value="retro">Retro</SelectItem>
+        <SelectItem value="modernRetro">Modern Retro</SelectItem>
+        <SelectItem value="glassy">Glassy</SelectItem>
+        <SelectItem value="neon">Neon</SelectItem>
       </SelectContent>
     </Select>
   );
