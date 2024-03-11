@@ -112,10 +112,10 @@ export const BoardModal = ({
             <span>
               Confused?{" "}
               <a
-                className="text-primary hover:cursor-pointer hover:underline"
+                className="text-foreground underline hover:cursor-pointer"
                 href="https://github.com/unxok/local-kanban"
               >
-                read the docs!
+                Read the docs!
               </a>
             </span>
           </DialogDescription>

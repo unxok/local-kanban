@@ -1,4 +1,4 @@
-import { BoardConfig } from "@/localSave";
+import { BoardConfig, CardConfig } from "@/localSave";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardTitle,
   cardVariants,
 } from "@/components/ui/card";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 import { useVariant } from "@/components/VariantProvider";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
@@ -19,16 +19,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { cn } from "@/utils";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { LaneModal } from "../LaneModal";
-import { UpdateBoardsType } from "@/App";
+import { UpdateBoardsType, UpdateCardsType } from "@/App";
 import { Lane } from "../Lane";
 
 export const Board = (
-  props: BoardConfig & { updateBoards: UpdateBoardsType },
+  props: BoardConfig & {
+    updateBoards: UpdateBoardsType;
+    cards: CardConfig[] | undefined;
+    updateCards: UpdateCardsType;
+  },
 ) => {
-  const { id, sortProperty, title, description, lanes, notes, styleConfig } =
-    props;
+  const {
+    id,
+    sortProperty,
+    title,
+    description,
+    lanes,
+    notes,
+    cards,
+    updateCards,
+  } = props;
   const { variant } = useVariant();
   return (
     <Card variant={variant} className="relative w-full">
@@ -41,12 +62,27 @@ export const Board = (
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="flex flex-1 flex-row gap-2">
-        {lanes ? (
-          lanes.map((l) => <Lane key={l.sortValue + id} boardId={id} {...l} />)
-        ) : (
-          <div>No lanes yet... use the three dots on the right to add one!</div>
-        )}
+      <CardContent>
+        <div className="whitespace-pre">{notes}</div>
+        <div className="flex flex-1 flex-row gap-2">
+          {lanes ? (
+            lanes.map((l) => (
+              <Lane
+                key={l.sortValue + id}
+                boardId={id}
+                {...l}
+                cards={cards?.filter(
+                  (c) => c.properties[sortProperty] === l.sortValue,
+                )}
+                updateCards={updateCards}
+              />
+            ))
+          ) : (
+            <div>
+              No lanes yet... use the three dots on the right to add one!
+            </div>
+          )}
+        </div>
       </CardContent>
       {/* <CardFooter>
         <p>Card Footer</p>
@@ -61,18 +97,10 @@ export const Board = (
 const BoardSettingsButton = (
   props: BoardConfig & { updateBoards: UpdateBoardsType },
 ) => {
-  const {
-    id,
-    sortProperty,
-    title,
-    description,
-    lanes,
-    notes,
-    styleConfig,
-    updateBoards,
-  } = props;
+  const { id, title, updateBoards } = props;
   const { variant } = useVariant();
   const [isLaneModalOpen, setLaneModalOpen] = useState(false);
+  const [isBoardDeleteModalOpen, setBoardDeleteModalOpen] = useState(false);
   return (
     <>
       <DropdownMenu
@@ -96,10 +124,8 @@ const BoardSettingsButton = (
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Export</DropdownMenuItem>
           <DropdownMenuItem>Import</DropdownMenuItem>
-          <DropdownMenuItem className="group">
-            <span className="transition-colors group-hover:text-destructive">
-              Delete
-            </span>
+          <DropdownMenuItem onClick={() => setBoardDeleteModalOpen((b) => !b)}>
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -111,6 +137,67 @@ const BoardSettingsButton = (
           boardId={id}
         />
       )}
+      <BoardDeleteModal
+        boardId={id}
+        boardTitle={title}
+        updateBoards={updateBoards}
+        open={isBoardDeleteModalOpen}
+        onOpenChange={setBoardDeleteModalOpen}
+      />
     </>
+  );
+};
+
+const BoardDeleteModal = ({
+  boardId,
+  boardTitle,
+  updateBoards,
+  open,
+  onOpenChange,
+}: {
+  boardId: string;
+  boardTitle: string;
+  updateBoards: UpdateBoardsType;
+  open: boolean;
+  onOpenChange: (b: boolean) => void;
+}) => {
+  const { variant } = useVariant();
+
+  if (!open) return;
+
+  return (
+    <Dialog open={open} onOpenChange={(b) => onOpenChange(b)}>
+      <DialogTrigger className="transition-colors group-hover:text-destructive">
+        Delete
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete {boardTitle} board</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your
+            board from your save data.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant={"ghost"}>Actually nevermind</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              variant={variant}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
+              onClick={() => {
+                updateBoards((prev) => {
+                  if (!prev) return prev;
+                  return prev.filter((b) => b.id !== boardId);
+                });
+              }}
+            >
+              Do it
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

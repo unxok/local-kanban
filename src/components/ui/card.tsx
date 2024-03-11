@@ -6,13 +6,13 @@ import { VariantProps, cva } from "class-variance-authority";
 export const cardVariants = cva("rounded-xl border shadow", {
   variants: {
     variant: {
-      default: "bg-card text-card-foreground",
-      glassy: "bg-card/60 backdrop-blur-md",
-      neon: "border-2 border-primary shadow-lg shadow-primary bg-card text-card-foreground",
+      default: "bg-background text-card-foreground",
+      glassy: "bg-background/60 backdrop-blur-md",
+      neon: "border-2 border-primary shadow-lg shadow-primary bg-background text-card-foreground",
       modernRetro:
-        "border border-b-2 border-foreground bg-card/80 backdrop-blur-sm shadow-inner shadow-white/80",
+        "border border-b-2 border-black bg-background/80 backdrop-blur-sm shadow-inner shadow-white/80",
       retro:
-        "bg-card text-foreground border-foreground border-2 rounded-sm shadow-retro",
+        "bg-background text-foreground border-foreground border-2 rounded-sm shadow-retro",
     },
   },
   defaultVariants: {

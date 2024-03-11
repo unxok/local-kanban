@@ -1,4 +1,4 @@
-import { BoardConfig } from "@/localSave";
+import { BoardConfig, CardConfig } from "@/localSave";
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -6,11 +6,13 @@ import {
 } from "../ui/resizable";
 import { Main } from "./Main";
 import { Sidebar } from "./Sidebar";
-import { UpdateBoardsType } from "@/App";
+import { UpdateBoardsType, UpdateCardsType } from "@/App";
 
 export type BodyProps = {
   boards: BoardConfig[] | undefined;
   updateBoards: UpdateBoardsType;
+  cards: CardConfig[] | undefined;
+  updateCards: UpdateCardsType;
 };
 export const Body = (props: BodyProps) => {
   return (

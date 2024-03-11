@@ -160,10 +160,10 @@ export const LaneModal = ({
             <span>
               Confused?{" "}
               <a
-                className="text-accent-foreground underline hover:cursor-pointer"
+                className="text-foreground underline hover:cursor-pointer"
                 href="https://github.com/unxok/local-kanban"
               >
-                read the docs!
+                Read the docs!
               </a>
             </span>
           </DialogDescription>

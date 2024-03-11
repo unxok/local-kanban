@@ -27,8 +27,7 @@ const buttonVariants = cva(
         retro:
           "bg-primary border-current border-2 text-black rounded-sm shadow-retro hover:bg-primary/80",
         neon: "bg-card shadow shadow-md bg-background text-accent-foreground border border-primary shadow-primary",
-        glassy:
-          "bg-primary/90 hover:bg-primary/70 backdrop-blur-sm border-primary-foreground border",
+        glassy: "bg-primary/90 hover:bg-primary/70 backdrop-blur-sm border",
       },
       size: {
         default: "h-9 px-4 py-2",

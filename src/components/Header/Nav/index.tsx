@@ -1,7 +1,9 @@
 import { ResizablePanel } from "@/components/ui/resizable";
 import { SettingsButton } from "./SettingsButton";
 
-export const Nav = () => (
+export const Nav = (props: {
+  setThemeCss: React.Dispatch<React.SetStateAction<string>>;
+}) => (
   <ResizablePanel
     className="relative flex items-center justify-between"
     id="nav"
@@ -24,7 +26,7 @@ export const Nav = () => (
       </a>
     </div>
     <div className="flex w-1/6 items-center justify-end px-5">
-      <SettingsButton />
+      <SettingsButton {...props} />
     </div>
   </ResizablePanel>
 );

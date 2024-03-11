@@ -7,7 +7,17 @@ import {
   ResizableHandle,
 } from "./components/ui/resizable";
 import { Toaster } from "./components/ui/sonner";
-import { BoardConfig, getLocalBoards, setLocalBoards } from "./localSave";
+import {
+  BoardConfig,
+  CardConfig,
+  getLocalBoards,
+  getLocalCards,
+  getRandomImageBase64,
+  loadThemeCss,
+  saveThemeCss,
+  setLocalBoards,
+  setLocalCards,
+} from "./localSave";
 import { toast } from "sonner";
 import { VariantProvider } from "./components/VariantProvider";
 
@@ -18,10 +28,47 @@ export type UpdateBoardsType = (
     | undefined,
 ) => void;
 
+export type UpdateCardsType = (
+  arg:
+    | CardConfig[]
+    | ((b: CardConfig[] | undefined) => CardConfig[] | undefined)
+    | undefined,
+) => void;
+
 const App = () => {
   const [boards, setBoards] = useState<BoardConfig[] | undefined>(
     getLocalBoards(),
   );
+  const [cards, setCards] = useState<CardConfig[] | undefined>(getLocalCards());
+  const [dataBase64, setDataBase64] = useState<string>();
+  const [themeCss, setThemeCss] = useState("");
+
+  const doBoardEffect = () => {
+    setLocalBoards(boards ? boards : []);
+  };
+
+  const doCardsEffect = () => {
+    setLocalCards(cards ? cards : []);
+  };
+
+  const doRandomImageEffect = () => {
+    const searchTerms = localStorage.getItem("searchTerms");
+    (async () => {
+      const imgBase64 = await getRandomImageBase64(searchTerms || "");
+      imgBase64 && setDataBase64(imgBase64);
+    })();
+  };
+
+  const doThemeEffect = () => {
+    if (!themeCss) {
+      const css = localStorage.getItem("themeCss");
+      setThemeCss(css || "");
+      loadThemeCss();
+      return;
+    }
+    saveThemeCss(themeCss);
+    loadThemeCss();
+  };
 
   useEffect(() => {
     if (!boards) {
@@ -29,9 +76,11 @@ const App = () => {
     } else {
       toast.success("Board save data found");
     }
-    if (!boards) return;
-    setLocalBoards(boards);
-  }, [boards]);
+    doBoardEffect();
+    doCardsEffect();
+    doRandomImageEffect();
+    doThemeEffect();
+  }, [boards, cards, themeCss]);
 
   const updateBoards: UpdateBoardsType = (arg) => {
     if (typeof arg === "function") {
@@ -40,15 +89,32 @@ const App = () => {
     setBoards(arg);
   };
 
+  const updateCards: UpdateCardsType = (arg) => {
+    if (typeof arg === "function") {
+      return setCards((prev) => arg(prev));
+    }
+    setCards(arg);
+  };
+
   return (
     <ThemeProvider defaultTheme="light">
       {/* // TODO Add some state here to allow customizable theme */}
       <VariantProvider defaultVariant="default">
-        <div className=" fixed inset-0 bg-[url(https://source.unsplash.com/random/1920x1080?yellow)] bg-cover">
+        <div
+          className=" fixed inset-0 bg-secondary bg-cover"
+          style={{
+            backgroundImage: `url(${dataBase64})`,
+          }}
+        >
           <ResizablePanelGroup autoSaveId={"app-layout"} direction="vertical">
-            <Header />
+            <Header setThemeCss={setThemeCss} />
             <ResizableHandle className="data-[resize-handle-state=drag]:bg-primary data-[resize-handle-state=hover]:bg-primary" />
-            <Body boards={boards} updateBoards={updateBoards} />
+            <Body
+              boards={boards}
+              updateBoards={updateBoards}
+              cards={cards}
+              updateCards={updateCards}
+            />
           </ResizablePanelGroup>
         </div>
         <Toaster richColors toastOptions={{}} />

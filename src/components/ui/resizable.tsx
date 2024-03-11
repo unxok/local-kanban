@@ -20,11 +20,11 @@ const ResizablePanelGroup = ({
 export const resizablePanelVariants = cva("", {
   variants: {
     variant: {
-      default: "bg-card",
-      glassy: "bg-card/60 backdrop-blur-md",
-      modernRetro: "bg-card/60 backdrop-blur-md",
-      retro: "bg-card",
-      neon: "bg-card border-primary",
+      default: "bg-background",
+      glassy: "bg-background/60 backdrop-blur-md",
+      modernRetro: "bg-background/60 backdrop-blur-md",
+      retro: "bg-background",
+      neon: "bg-background border-primary",
     },
   },
   defaultVariants: {

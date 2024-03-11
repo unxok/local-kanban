@@ -9,7 +9,9 @@ import { Logo } from "./Logo";
 import { Nav } from "./Nav";
 import { cn } from "@/utils";
 
-export const Header = () => {
+export const Header = (props: {
+  setThemeCss: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const { variant } = useVariant();
   return (
     <ResizablePanel
@@ -26,7 +28,7 @@ export const Header = () => {
       <ResizablePanelGroup autoSaveId="header-layout" direction="horizontal">
         <Logo />
         <ResizableHandle className="data-[resize-handle-state=drag]:bg-primary data-[resize-handle-state=hover]:bg-primary" />
-        <Nav />
+        <Nav {...props} />
       </ResizablePanelGroup>
     </ResizablePanel>
   );

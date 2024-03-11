@@ -82,11 +82,53 @@ export const getLocalCards = () => {
   }
 };
 
-export const setLocalCards = (cardsString: string) => {
+export const setLocalCards = (cards: CardConfig[]) => {
   try {
-    const cards = JSON.stringify(cardsString);
-    localStorage.setItem(CARDS, cards);
+    const cardsString = JSON.stringify(cards);
+    localStorage.setItem(CARDS, cardsString);
   } catch (e) {
     throw new Error("Error occurred when stringifying card data");
   }
+};
+
+/**
+ * Given a blob, returns a encoded base64 string
+ * @param blob A blob
+ * @returns base64 string encoded blob
+ */
+const blobToBase64 = (blob: Blob) => {
+  return new Promise<string>((res, rej) => {
+    const r = new FileReader();
+    r.onloadend = () => res(r.result as string);
+    r.onerror = (e) => rej(e);
+    r.readAsDataURL(blob);
+  });
+};
+
+/**
+ * Given search terms, returns random base64 encoded image
+ * @param searchTerms A string that is a comma separted list of words
+ * @returns base64 string encoding of image
+ */
+export const getRandomImageBase64 = async (searchTerms: string) => {
+  const res = await fetch(
+    `https://source.unsplash.com/random/1920x1080?${searchTerms}`,
+  );
+  const blob = await res.blob();
+  const base64 = await blobToBase64(blob);
+  return base64;
+};
+
+export const loadThemeCss = () => {
+  const str = localStorage.getItem("themeCss");
+  if (!str) return;
+  const styleTags = document.querySelectorAll("style");
+  const lastStyleTag = styleTags[styleTags.length - 1];
+  const newStyleTag = document.createElement("style");
+  newStyleTag.innerText = str;
+  lastStyleTag.insertAdjacentElement("afterend", newStyleTag);
+};
+
+export const saveThemeCss = (str: string) => {
+  localStorage.setItem("themeCss", str);
 };
