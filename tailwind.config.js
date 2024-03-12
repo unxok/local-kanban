@@ -73,6 +73,7 @@ module.exports = {
       },
       boxShadow: {
         retro: "3px 3px 3px 1px currentColor",
+        threeD: "inset 3px 3px 5px white, inset -3px -3px 5px black",
       },
     },
   },

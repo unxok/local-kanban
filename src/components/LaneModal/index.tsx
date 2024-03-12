@@ -137,7 +137,6 @@ export const LaneModal = ({
   };
 
   useEffect(() => {
-    console.log(formState);
     if (!formState?.title || !formState?.sortValue) return setHasInvalid(true);
     setHasInvalid(false);
   }, [formState]);

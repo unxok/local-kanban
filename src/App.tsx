@@ -59,6 +59,11 @@ const App = () => {
     })();
   };
 
+  const doStaticImageEffect = () => {
+    const imgBase64 = localStorage.getItem("staticBackground");
+    imgBase64 && setDataBase64(imgBase64);
+  };
+
   const doThemeEffect = () => {
     if (!themeCss) {
       const css = localStorage.getItem("themeCss");
@@ -78,7 +83,8 @@ const App = () => {
     }
     doBoardEffect();
     doCardsEffect();
-    doRandomImageEffect();
+    const bgType = localStorage.getItem("bgType");
+    bgType === "static" ? doStaticImageEffect() : doRandomImageEffect();
     doThemeEffect();
   }, [boards, cards, themeCss]);
 

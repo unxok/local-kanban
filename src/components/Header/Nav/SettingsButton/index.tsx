@@ -6,7 +6,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { DownloadIcon, GearIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { downloadToFile } from "@/utils";
 import {
@@ -39,7 +39,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { saveThemeCss } from "@/localSave";
+import { blobToBase64, saveThemeCss } from "@/localSave";
 
 export const SettingsButton = (props: {
   setThemeCss: React.Dispatch<React.SetStateAction<string>>;
@@ -245,80 +245,6 @@ const VariantSelector = () => {
   );
 };
 
-const BgImageSelector = () => {
-  const [searchTerms, setSearchTerms] = useState<string>(
-    localStorage.getItem("searchTerms") || "",
-  );
-  return (
-    <Accordion
-      type="single"
-      collapsible
-      className="w-full border-b px-3 text-foreground"
-    >
-      <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className="w-full py-2">
-          Background Image
-        </AccordionTrigger>
-        <AccordionContent asChild>
-          <RadioGroup
-            defaultValue="random"
-            onValueChange={(v) => console.log(v)}
-          >
-            <span className="flex w-full flex-col items-start justify-start gap-3">
-              <span className="flex flex-row gap-2">
-                <RadioGroupItem value="random" id="random" />
-                <Label htmlFor="random">Random Image</Label>
-              </span>
-              <span className="flex w-full flex-row gap-2 px-6">
-                <Label htmlFor="randomSearchTerms" className="sr-only">
-                  Search terms
-                </Label>
-                <Input
-                  id="randomSearchTerms"
-                  type="text"
-                  placeholder="search terms here"
-                  value={searchTerms}
-                  onInput={(e) => setSearchTerms(e.currentTarget.value)}
-                  className="w-full"
-                />
-                <Button
-                  variant={"ghost"}
-                  onClick={() => {
-                    localStorage.setItem("searchTerms", searchTerms);
-                    console.log("just set st: ", searchTerms);
-                    window.location.reload();
-                  }}
-                >
-                  <DownloadIcon />
-                </Button>
-              </span>
-            </span>
-            <span className="flex w-full flex-col items-start justify-start gap-3">
-              <span className="flex flex-row gap-2">
-                {/* TODO get this working */}
-                <RadioGroupItem disabled value="static" id="static" />
-                <Label htmlFor="static">Static Image</Label>
-              </span>
-              <span className="flex flex-col gap-2 px-6">
-                <Label htmlFor="uploadImage" className="sr-only">
-                  Upload image
-                </Label>
-                <Input
-                  disabled
-                  id="uploadImage"
-                  type="file"
-                  placeholder="search terms here"
-                  className="hover:cursor-pointer hover:border-foreground hover:text-foreground"
-                />
-              </span>
-            </span>
-          </RadioGroup>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  );
-};
-
 const ThemeCustomizerButton = ({
   setThemeCss,
 }: {
@@ -431,5 +357,100 @@ const ThemeCustomizerButton = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const BgImageSelector = () => {
+  const [bgType, setBgType] = useState(
+    localStorage.getItem("bgType") || "random",
+  );
+  const [searchTerms, setSearchTerms] = useState<string>(
+    localStorage.getItem("searchTerms") || "",
+  );
+  const [staticImgBlob, setStaticImgBlob] = useState<File>();
+
+  const updateBgType = (v: "random" | "static") => {
+    setBgType(v);
+    localStorage.setItem("bgType", v);
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!staticImgBlob) return;
+      const base64 = await blobToBase64(staticImgBlob);
+      localStorage.setItem("staticBackground", base64);
+      localStorage.setItem("bgType", "static");
+      window.location.reload();
+    })();
+  }, [staticImgBlob]);
+
+  return (
+    <Accordion
+      type="single"
+      collapsible
+      className="w-full border-b px-3 text-foreground"
+    >
+      <AccordionItem value="item-1" className="border-b-0">
+        <AccordionTrigger className="w-full py-2">
+          Background Image
+        </AccordionTrigger>
+        <AccordionContent asChild>
+          <RadioGroup
+            defaultValue={bgType}
+            onValueChange={(v) => updateBgType(v as "random" | "static")}
+          >
+            <span className="flex w-full flex-col items-start justify-start gap-3">
+              <span className="flex flex-row gap-2">
+                <RadioGroupItem value="random" id="random" />
+                <Label htmlFor="random">Random Image</Label>
+              </span>
+              <span className="flex w-full flex-row gap-2 px-6">
+                <Label htmlFor="randomSearchTerms" className="sr-only">
+                  Search terms
+                </Label>
+                <Input
+                  id="randomSearchTerms"
+                  type="text"
+                  placeholder="search terms here"
+                  value={searchTerms}
+                  onInput={(e) => setSearchTerms(e.currentTarget.value)}
+                  className="w-full"
+                />
+                <Button
+                  variant={"ghost"}
+                  onClick={() => {
+                    localStorage.setItem("searchTerms", searchTerms);
+                    window.location.reload();
+                  }}
+                >
+                  <DownloadIcon />
+                </Button>
+              </span>
+            </span>
+            <span className="flex w-full flex-col items-start justify-start gap-3">
+              <span className="flex flex-row gap-2">
+                {/* TODO get this working */}
+                <RadioGroupItem value="static" id="static" className="group" />
+                <Label htmlFor="static">Static Image</Label>
+              </span>
+              <span className="flex flex-col gap-2 px-6">
+                <Label htmlFor="uploadImage" className="sr-only">
+                  Upload image
+                </Label>
+                <Input
+                  id="uploadImage"
+                  type="file"
+                  placeholder="search terms here"
+                  className="file:text-muted-foreground hover:cursor-pointer hover:border-foreground  hover:text-foreground"
+                  onChange={(e) =>
+                    setStaticImgBlob(e.currentTarget?.files?.[0])
+                  }
+                />
+              </span>
+            </span>
+          </RadioGroup>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };

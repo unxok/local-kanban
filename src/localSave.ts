@@ -32,6 +32,7 @@ export type CardConfig = {
   board: string;
   properties: Record<string, string>;
   description?: string;
+  notes?: string;
   tags?: string[];
   styleConfig?: BaseStyleConfig;
 };
@@ -96,7 +97,7 @@ export const setLocalCards = (cards: CardConfig[]) => {
  * @param blob A blob
  * @returns base64 string encoded blob
  */
-const blobToBase64 = (blob: Blob) => {
+export const blobToBase64 = (blob: Blob) => {
   return new Promise<string>((res, rej) => {
     const r = new FileReader();
     r.onloadend = () => res(r.result as string);
@@ -122,9 +123,15 @@ export const getRandomImageBase64 = async (searchTerms: string) => {
 export const loadThemeCss = () => {
   const str = localStorage.getItem("themeCss");
   if (!str) return;
+  const foundTag = document.getElementById("themeCss");
+  if (foundTag) {
+    foundTag.innerText = str;
+    return;
+  }
   const styleTags = document.querySelectorAll("style");
   const lastStyleTag = styleTags[styleTags.length - 1];
   const newStyleTag = document.createElement("style");
+  newStyleTag.id = "themeCss";
   newStyleTag.innerText = str;
   lastStyleTag.insertAdjacentElement("afterend", newStyleTag);
 };

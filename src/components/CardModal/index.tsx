@@ -6,31 +6,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BoardConfig } from "@/localSave";
+import { CardConfig } from "@/localSave";
 import { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { v4 as uuidv4 } from "uuid";
-import { UpdateBoardsType } from "@/App";
+import { UpdateCardsType } from "@/App";
 import { toast } from "sonner";
+import { Textarea } from "../ui/textarea";
 
-type BoardModalProps = {
+type CardModalProps = {
   open: boolean;
   onOpenChange: (b: boolean) => void;
-  defaultData?: BoardConfig;
-  updateBoards: UpdateBoardsType;
+  defaultData?: CardConfig;
+  updateCards: UpdateCardsType;
 };
 
-type UpdateFormStateType = (name: keyof BoardConfig, value: any) => void;
+type UpdateFormStateType = (name: keyof CardConfig, value: any) => void;
 
-export const BoardModal = ({
+export const CardModal = ({
   open,
   onOpenChange,
   defaultData,
-  updateBoards,
-}: BoardModalProps) => {
-  const [formState, setFormState] = useState<Partial<BoardConfig> | undefined>(
+  updateCards,
+}: CardModalProps) => {
+  const [formState, setFormState] = useState<Partial<CardConfig> | undefined>(
     defaultData || {
       id: uuidv4(),
     },
@@ -46,38 +47,36 @@ export const BoardModal = ({
 
   const handleFormSubmit = () => {
     // TODO add zod validation?? I kind of have validation already, but really I should be validating here too right?
-
     // means we are updating
-    if (defaultData) {
-      updateBoards((prev) => {
-        if (!prev) {
-          toast.error("This should never happen! Check console");
-          console.error("Tried to update a board when none exist");
-          return undefined;
-        }
-        const copyPrev = [...prev];
-        const foundBoardIndex = copyPrev.findIndex(
-          (b) => b.id === formState?.id,
-        );
-        if (foundBoardIndex === -1) {
-          toast.error("This should never happen! Check console");
-          console.error("Couldn't find board you're trying to update.");
-          return copyPrev;
-        }
-        copyPrev[foundBoardIndex] = formState as BoardConfig;
-        return copyPrev;
-      });
-    }
-
-    // means we are creating new
-    updateBoards((prev) => {
-      const copyPrev = prev ? [...prev] : [];
-      return [...copyPrev, formState as BoardConfig];
-    });
+    // if (defaultData) {
+    //   updateBoards((prev) => {
+    //     if (!prev) {
+    //       toast.error("This should never happen! Check console");
+    //       console.error("Tried to update a board when none exist");
+    //       return undefined;
+    //     }
+    //     const copyPrev = [...prev];
+    //     const foundBoardIndex = copyPrev.findIndex(
+    //       (b) => b.id === formState?.id,
+    //     );
+    //     if (foundBoardIndex === -1) {
+    //       toast.error("This should never happen! Check console");
+    //       console.error("Couldn't find board you're trying to update.");
+    //       return copyPrev;
+    //     }
+    //     copyPrev[foundBoardIndex] = formState as CardConfig;
+    //     return copyPrev;
+    //   });
+    // }
+    // // means we are creating new
+    // updateBoards((prev) => {
+    //   const copyPrev = prev ? [...prev] : [];
+    //   return [...copyPrev, formState as CardConfig];
+    // });
   };
 
   const handleFormDelete = () => {
-    updateBoards((prev) => {
+    updateCards((prev) => {
       if (!prev) {
         toast.error("This should never happen! Check console");
         console.error("Tried to delete a board when none exist");
@@ -88,9 +87,10 @@ export const BoardModal = ({
   };
 
   useEffect(() => {
-    if (!formState?.title || !formState?.sortProperty)
-      return setHasInvalid(true);
-    setHasInvalid(false);
+    // if (!formState?.title || !formState?.sortProperty)
+    //   return setHasInvalid(true);
+    // setHasInvalid(false);
+    console.log(formState);
   }, [formState]);
   // useEffect(() => console.log(hasInvalid), [hasInvalid]);
 
@@ -101,12 +101,10 @@ export const BoardModal = ({
           <DialogTitle>
             {defaultData?.title
               ? `Updating ${defaultData.title} board`
-              : "New board"}
+              : "New card"}
           </DialogTitle>
           <DialogDescription className="flex flex-col gap-1">
-            {!defaultData && (
-              <span>You can add lanes and cards after creation.</span>
-            )}
+            {!defaultData && <span>Do not remove the default property!</span>}
             <span>
               Confused?{" "}
               <a
@@ -120,11 +118,12 @@ export const BoardModal = ({
         </DialogHeader>
         <form className="flex flex-col gap-4">
           <TitleInput formState={formState} updateFormState={updateFormState} />
-          <SortPropertyInput
+          <DescriptionInput
             formState={formState}
             updateFormState={updateFormState}
           />
-          <DescriptionInput
+          <TagsInput formState={formState} updateFormState={updateFormState} />
+          <PropertiesInput
             formState={formState}
             updateFormState={updateFormState}
           />
@@ -149,7 +148,7 @@ const TitleInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<CardConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   const [isValid, setValidity] = useState(true);
@@ -168,41 +167,8 @@ const TitleInput = ({
         id="title"
         type="text"
         value={formState?.title || ""}
-        placeholder={!isValid ? "required!" : "My Tasks..."}
+        placeholder={!isValid ? "required!" : "Do a thing..."}
         onInput={(e) => updateFormState("title", e.currentTarget.value)}
-        onBlur={() => checkValidity()}
-        onFocus={() => setValidity(true)}
-        className={!isValid ? "border-destructive" : ""}
-      />
-    </div>
-  );
-};
-
-const SortPropertyInput = ({
-  formState,
-  updateFormState,
-}: {
-  formState: Partial<BoardConfig> | undefined;
-  updateFormState: UpdateFormStateType;
-}) => {
-  const [isValid, setValidity] = useState(true);
-
-  const checkValidity = () => {
-    if (!formState?.sortProperty) {
-      return setValidity(false);
-    }
-    setValidity(true);
-  };
-
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="sortProperty">Sort Property</Label>
-      <Input
-        id="sortProperty"
-        type="text"
-        value={formState?.sortProperty || ""}
-        placeholder={!isValid ? "required!" : "status"}
-        onInput={(e) => updateFormState("sortProperty", e.currentTarget.value)}
         onBlur={() => checkValidity()}
         onFocus={() => setValidity(true)}
         className={!isValid ? "border-destructive" : ""}
@@ -215,7 +181,7 @@ const DescriptionInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<CardConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   return (
@@ -225,8 +191,89 @@ const DescriptionInput = ({
         id="description"
         type="text"
         value={formState?.description || ""}
-        placeholder="my tasks for the day..."
+        placeholder="Need to do this thing..."
         onInput={(e) => updateFormState("description", e.currentTarget.value)}
+      />
+    </div>
+  );
+};
+
+const TagsInput = ({
+  formState,
+  updateFormState,
+}: {
+  formState: Partial<CardConfig> | undefined;
+  updateFormState: UpdateFormStateType;
+}) => {
+  const [tagString, setTagString] = useState(formState?.tags?.join(", ") || "");
+  useEffect(() => {
+    const tags = tagString.split(",").map((t) => t.trim());
+    updateFormState("tags", tags);
+  }, [tagString]);
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="tags">Tags</Label>
+      <Input
+        id="tags"
+        type="text"
+        value={tagString}
+        placeholder="task, thing, ..."
+        onInput={(e) => setTagString(e.currentTarget.value)}
+      />
+    </div>
+  );
+};
+
+const objToString = (obj: Record<string, string>) => {
+  const keys = Object.keys(obj);
+  const str = keys
+    .map((key) => {
+      return `${key}: ${obj[key]}`;
+    })
+    .join(", ");
+
+  return str;
+};
+
+const strToObject = (str: string) => {
+  const arr = str.split(",");
+  const obj = arr.reduce((acc, pair) => {
+    const [key, val] = pair
+      .trim()
+      .split(":")
+      .map((pv) => pv.trim());
+    return {
+      ...acc,
+      [key]: val,
+    };
+  }, {});
+  return obj;
+};
+
+const PropertiesInput = ({
+  formState,
+  updateFormState,
+}: {
+  formState: Partial<CardConfig> | undefined;
+  updateFormState: UpdateFormStateType;
+}) => {
+  const [propString, setPropString] = useState(
+    objToString(formState?.properties || {}) || "",
+  );
+
+  useEffect(() => {
+    const props = strToObject(propString);
+    updateFormState("properties", props);
+  }, [propString]);
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="properties">Properties</Label>
+      <Input
+        id="properties"
+        type="text"
+        value={propString}
+        placeholder="status: todo, name: value, ..."
+        onInput={(e) => setPropString(e.currentTarget.value)}
       />
     </div>
   );
@@ -236,17 +283,16 @@ const NotesInput = ({
   formState,
   updateFormState,
 }: {
-  formState: Partial<BoardConfig> | undefined;
+  formState: Partial<CardConfig> | undefined;
   updateFormState: UpdateFormStateType;
 }) => {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor="notes">Notes</Label>
-      <Input
+      <Textarea
         id="notes"
-        type="text"
         value={formState?.notes || ""}
-        placeholder="make sure to check throughout the day..."
+        placeholder="Some notes about doing a thing..."
         onInput={(e) => updateFormState("notes", e.currentTarget.value)}
       />
     </div>
